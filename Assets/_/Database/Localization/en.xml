@@ -1,0 +1,49 @@
+<localization>
+    <!-- TITLE SCREEN -->
+    <game_name>Guild Tycoon</game_name>
+    <continue_game>Continue</continue_game>
+    <new_game>New Game</new_game>
+    <load_game>Load</load_game>
+    <settings_game>Settings</settings_game>
+    <exit_game>Quit to Desktop</exit_game>
+    <!-- New Game -->
+    <new_game_desc>7th day of spring in the year 1165,&#10;&#10;A former apprentice of the guild order, you have decided to take the plunge and create your own.&#10;&#10;After some research, you stop at the place that seems the best place to start.&#10;Will a campfire, some supplies, and your eloquence allow you to become the best guild leader ?</new_game_desc>
+    <create_guild>Create!</create_guild>
+    
+    <!-- GENERIC BUTTONS -->
+    <button_accept>Accept</button_accept>
+    
+    <!-- BOARD GAME -->
+    <!-- Info Panel -->
+    <level_guild>Level</level_guild>
+    <!-- Quest Panel -->
+    <quests_list>Quests</quests_list>
+    <launch_quest_button>Launch Quest !</launch_quest_button>
+    <objective_label>Objective(s)</objective_label>
+    <!-- Quests Board Panel -->
+    <quests_board>Quests board</quests_board>
+    <!-- Inventory Panel -->
+    <inventory>Inventory</inventory>
+    <!-- Heroes Panel --> 
+    <heroes_list>Heroes</heroes_list>
+    <new_recruit_button>New recruit</new_recruit_button>
+    <!-- Recruit Panel -->
+    <recruit_list>New recruits</recruit_list>
+    <!-- Info Adventurer Panel -->
+    <in_qg>On QG</in_qg>
+    <in_quest>In mission</in_quest>
+    
+    <!-- QUESTS -->
+    <quest_title_1>Rats Invasion</quest_title_1>
+    <quest_desc_1>A cry of alarm rang out from the fields of old Marnel, a farmer living on the outskirts of a hamlet.\n\nFor several nights, his home has been besieged by a horde of aggressive rats, larger and more intelligent than average. Their eyes glow in the darkness, and their teeth gnaw through even the thickest beams of the barn. Tired, frightened, and at a loss for solutions, Marnel begs the guild for help.</quest_desc_1>
+    <quest_objective_1>Clean the farmer's house of these rodent invaders!</quest_objective_1>
+    <quest_title_2>Hamlet Troll</quest_title_2>
+    <quest_desc_2>A troll has gotten lost near a small hamlet. We must stop it from causing harm!</quest_desc_2>
+    <quest_objective_2>Kill a Troll</quest_objective_2>
+    
+    <!-- ITEMS -->
+    <item_gold>Gold</item_gold>
+    <item_gold_desc>Description for golds.</item_gold_desc>
+    <healing_potion>Healing Potion</healing_potion>
+    <healing_potion_desc>Simple healing potion.</healing_potion_desc>
+</localization>

@@ -1,0 +1,19 @@
+{
+    "name": "Decor.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2ca720bbf8aa349608caa5ce4acaa603",
+        "GUID:d01b71ecbce444a299cc1623f29e9d35",
+        "GUID:4a640bb60ad60478bba0cc41f9b80929",
+        "GUID:f5d0434d9e8c34eb1a16f4c57b172b85"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,19 @@
+{
+    "name": "MenuSystem.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2ca720bbf8aa349608caa5ce4acaa603",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:4a640bb60ad60478bba0cc41f9b80929",
+        "GUID:b76af64e599e34c6faee51acccc63c66"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
