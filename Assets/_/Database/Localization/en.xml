@@ -30,6 +30,7 @@
     <!-- Recruit Panel -->
     <recruit_list>New recruits</recruit_list>
     <!-- Info Adventurer Panel -->
+    <available_title>Available(s)</available_title>
     <in_qg>On QG</in_qg>
     <in_quest>In mission</in_quest>
     

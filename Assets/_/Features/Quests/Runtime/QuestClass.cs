@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Adventurer.Runtime;
 using Goals.Runtime;
+using UnityEngine;
 
 namespace Quests.Runtime
 {
@@ -62,6 +64,18 @@ namespace Quests.Runtime
             set { _minLevel = value; }
         }
 
+        public List<AdventurerClass> AssignedAdventurers
+        {
+            get
+            {
+                return _assignedAdventurers;
+            }
+            set
+            {
+                _assignedAdventurers = value;
+            }
+        }
+
         public GoalSystem Goals;
 
         #endregion
@@ -77,6 +91,7 @@ namespace Quests.Runtime
         List<string> _rewards;
         QuestStateEnum _state;
         int _minLevel;
+        List<AdventurerClass> _assignedAdventurers;
 
         public QuestClass(Guid id, string name, string description, string objective, float duration, QuestDifficultyEnum difficulty, List<string> reward, int minLevel = 1)
         {
@@ -89,30 +104,6 @@ namespace Quests.Runtime
             _rewards = reward;
             _minLevel = minLevel;
             _state = QuestStateEnum.Disponible;
-        }
-
-        #endregion
-
-
-        #region Methods
-
-        public void AttachGoalSystem(GoalSystem goalSystem)
-        {
-            Goals = goalSystem;
-        }
-
-        public void StartQuest()
-        {
-            _state = QuestStateEnum.Active;
-            foreach (var goal in Goals.GetGoalsByState(GoalState.Pending))
-            {
-                goal.StartGoal();
-            }
-        }
-
-        public bool IsCompleted()
-        {
-            return Goals != null && Goals.AreAllGoalsCompleted();
         }
 
         #endregion
