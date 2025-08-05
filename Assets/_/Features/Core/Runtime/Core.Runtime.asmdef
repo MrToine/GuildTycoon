@@ -2,7 +2,6 @@
     "name": "Core.Runtime",
     "rootNamespace": "Core.Runtime",
     "references": [
-        "GUID:b76af64e599e34c6faee51acccc63c66",
         "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],

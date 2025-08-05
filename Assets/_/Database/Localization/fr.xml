@@ -1,0 +1,58 @@
+<localization>
+    <!-- ÉCRAN TITRE -->
+    <game_name>Guild Tycoon</game_name>
+    <continue_game>Continuer</continue_game>
+    <new_game>Nouvelle Partie</new_game>
+    <load_game>Charger</load_game>
+    <settings_game>Options</settings_game>
+    <exit_game>Quitter le jeu</exit_game>
+
+    <!-- Nouvelle Partie -->
+    <new_game_desc>7e jour du printemps de l'an 1165,&#10;&#10;Ancien apprenti de l'ordre des guildes, vous avez décidé de vous lancer et de créer la vôtre.&#10;&#10;Après quelques recherches, vous vous arrêtez à l'endroit qui semble le plus propice pour commencer.&#10;Un feu de camp, quelques provisions et votre éloquence suffiront-ils à faire de vous le meilleur chef de guilde ?</new_game_desc>
+    <create_guild>Créer !</create_guild>
+
+    <!-- BOUTONS GÉNÉRIQUES -->
+    <button_accept>Accepter</button_accept>
+
+    <!-- PLATEAU DE JEU -->
+    <!-- Panneau d'infos -->
+    <level_guild>Niveau</level_guild>
+
+    <!-- Panneau des Quêtes -->
+    <quests_list>Quêtes</quests_list>
+    <launch_quest_button>Lancer la quête !</launch_quest_button>
+    <objective_label>Objectif(s)</objective_label>
+
+    <!-- Panneau du Tableau de Quêtes -->
+    <quests_board>Tableau des quêtes</quests_board>
+
+    <!-- Panneau d'Inventaire -->
+    <inventory>Inventaire</inventory>
+
+    <!-- Panneau des Héros -->
+    <heroes_list>Héros</heroes_list>
+    <new_recruit_button>Nouveau recrue</new_recruit_button>
+
+    <!-- Panneau de Recrutement -->
+    <recruit_list>Nouvelles recrues</recruit_list>
+
+    <!-- Panneau d’infos d’Aventurier -->
+    <available_title>Disponible(s)</available_title>
+    <in_qg>Au QG</in_qg>
+    <in_quest>En mission</in_quest>
+
+    <!-- QUÊTES -->
+    <quest_title_1>Invasion de rats</quest_title_1>
+    <quest_desc_1>Un cri d’alarme a retenti depuis les champs du vieux Marnel, un fermier vivant aux abords d’un hameau.\n\nDepuis plusieurs nuits, sa maison est assiégée par une horde de rats agressifs, plus grands et plus intelligents que la normale. Leurs yeux brillent dans l’obscurité et leurs dents rongent même les poutres les plus épaisses de la grange. Épuisé, effrayé, et à court de solutions, Marnel implore l’aide de la guilde.</quest_desc_1>
+    <quest_objective_1>Nettoyez la maison du fermier de ces envahisseurs rongeurs !</quest_objective_1>
+
+    <quest_title_2>Troll au hameau</quest_title_2>
+    <quest_desc_2>Un troll s’est égaré près d’un petit hameau. Il faut l’arrêter avant qu’il ne fasse des dégâts !</quest_desc_2>
+    <quest_objective_2>Tuez un troll</quest_objective_2>
+
+    <!-- OBJETS -->
+    <item_gold>Or</item_gold>
+    <item_gold_desc>Description de l’or.</item_gold_desc>
+    <healing_potion>Potion de soin</healing_potion>
+    <healing_potion_desc>Potion de soin simple.</healing_potion_desc>
+</localization>

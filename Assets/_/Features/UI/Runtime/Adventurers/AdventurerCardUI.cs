@@ -1,4 +1,6 @@
+using System;
 using Adventurer.Runtime;
+using Quests.Runtime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +9,9 @@ namespace GameUI.Runtime
     public class AdventurerCardUI : MonoBehaviour
     {
         #region Publics
-        
+
         [Header("UI References")]
+        public GameObject m_hourglass;
         public TMPro.TextMeshProUGUI m_name;
         public TMPro.TextMeshProUGUI m_class;
         //public TMPro.TextMeshProUGUI m_traits;
@@ -33,6 +36,11 @@ namespace GameUI.Runtime
 
         public AdventurerClass Adventurer => _adventurer;
 
+        void Start()
+        {
+            QuestManager.OnQuestCompleted += ChangeAvailable;
+        }
+
         public void setup(AdventurerClass adventurerClass)
         {
             _adventurer = adventurerClass;
@@ -43,6 +51,9 @@ namespace GameUI.Runtime
             m_defense.text = adventurerClass.Defense.ToString();
             m_agility.text = adventurerClass.Agility.ToString();
             m_intelligence.text = adventurerClass.Intelligence.ToString();
+            
+            if(!adventurerClass.IsAvailable && m_hourglass != null)
+                m_hourglass.gameObject.SetActive(true);
 
             var interaction = GetComponent<InteractionAdventurerCard>();
             if (interaction != null)
@@ -53,6 +64,15 @@ namespace GameUI.Runtime
         {
             if (m_portrait != null)
                 m_portrait.sprite = portrait;
+        }
+
+        void ChangeAvailable(QuestClass quest)
+        {
+            if (quest.State == QuestStateEnum.Completed && _adventurer.IsAvailable)
+            {
+                if (m_hourglass != null)
+                    m_hourglass.gameObject.SetActive(false);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Runtime;
+using EventSystem.Runtime;
 using Quests.Runtime;
 using TMPro;
 using UnityEngine;
@@ -65,8 +66,8 @@ namespace GameUI.Runtime
             
             List<string> quests = GetFact<List<string>>("quests");
             quests.Add(_quest.Name);
-
             SaveFacts();
+            QuestSignals.RaiseRefreshQuests();
             Destroy(gameObject); 
         }
 

@@ -9,34 +9,19 @@ namespace GameUI.Runtime
 {
     public class InteractionQuestCard : BaseMonobehaviour
     {
+        [SerializeField] private QuestFactoryDatabase _questDatabase;
 
-        #region Publics
-
-        //
-
-        #endregion
-
-
-        #region Unity API
-
-        //
-
-        #endregion
-
-
-        #region Main Methods
+        private QuestClass _quest;
 
         public void SetQuest(string questName)
         {
-            List<string> myQuests = GetFact<List<string>>("quests"); 
-            Info("On parcours la liste des quêtes ...");
+            List<string> myQuests = GetFact<List<string>>("quests");
+
             QuestTemplate template = _questDatabase.GetTemplatesByTitle(questName);
 
             if (template != null)
             {
-                Info("Quête trouvée");
                 _quest = template.ToQuestClass();
-                Info($"Titre > {_quest.Name}");
             }
             else
             {
@@ -46,25 +31,10 @@ namespace GameUI.Runtime
 
         public void OnClick()
         {
-            QuestSignals.RaiseInfoQuestPanel(_quest);
+            if (_quest != null)
+            {
+                QuestSignals.RaiseInfoQuestPanel(_quest);
+            }
         }
-
-        #endregion
-
-
-        #region Utils
-
-        /* Fonctions privées utiles */
-
-        #endregion
-
-
-        #region Privates and Protected
-
-        [SerializeField] QuestFactoryDatabase _questDatabase;
-        QuestClass _quest;
-
-        #endregion
     }
 }
-

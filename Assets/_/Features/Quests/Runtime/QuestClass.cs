@@ -34,7 +34,7 @@ namespace Quests.Runtime
             set { _objective = value; }
         }
 
-        public float Duration
+        public int Duration
         {
             get { return _duration; }
             set { _duration = value; }
@@ -78,6 +78,18 @@ namespace Quests.Runtime
 
         public GoalSystem Goals;
 
+        public int EndGameSeconds
+        {
+            get
+            {
+                return _endGameSeconds;
+            }
+            set
+            {
+                _endGameSeconds = value;
+            }
+        }
+
         #endregion
         
         #region Parameters
@@ -86,14 +98,15 @@ namespace Quests.Runtime
         string _name;
         string _description;
         string _objective;
-        float _duration;
+        int _duration;
         QuestDifficultyEnum _difficulty;
         List<string> _rewards;
         QuestStateEnum _state;
         int _minLevel;
         List<AdventurerClass> _assignedAdventurers;
+        int _endGameSeconds;
 
-        public QuestClass(Guid id, string name, string description, string objective, float duration, QuestDifficultyEnum difficulty, List<string> reward, int minLevel = 1)
+        public QuestClass(Guid id, string name, string description, string objective, int duration, QuestDifficultyEnum difficulty, List<string> reward, int minLevel = 1)
         {
             _id = id;
             _name = name;

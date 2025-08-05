@@ -4,7 +4,6 @@ using Adventurer.Runtime;
 using Core.Runtime;
 using EventSystem.Runtime;
 using Quests.Runtime;
-using Quests.Runtime._.Features.Quests.Runtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -85,9 +84,11 @@ namespace GameUI.Runtime
             {
                 case QuestStateEnum.Disponible:
                     _buttonActivation.gameObject.SetActive(true);
+                    _adventurersOnThisQuestPanel.SetActive(false);
                     break;
                 default:
                     _buttonActivation.gameObject.SetActive(false);
+                    _adventurersOnThisQuestPanel.SetActive(true);
                     break;
             }
         }
@@ -96,16 +97,15 @@ namespace GameUI.Runtime
         {
             if (_adventurersSelected.Count > 0)
             {
-                QuestManager.Instance.StartQuest(QuestManager.Instance.CurrentQuest, _adventurersSelected);
+                GameTime gameTime = GetFact<GameTime>("game_time");
+                QuestManager.Instance.StartQuest(QuestManager.Instance.CurrentQuest, _adventurersSelected, gameTime);
                 _adventurersSelected.Clear();
                 AdventurerSignals.RaiseRefreshAdventurers();
 
-                if (!FactExists<List<QuestClass>>("active_quests", out _))
-                {
-                    SetFact<List<QuestClass>>("active_quests", new List<QuestClass>(), FactPersistence.Persistent);;
-                }
                 List<QuestClass> activeQuests = GetFact<List<QuestClass>>("active_quests");
                 activeQuests.Add(QuestManager.Instance.CurrentQuest);
+                
+                QuestSignals.RaiseRefreshQuests();
                 
                 SaveFacts();
                 GameObject.SetActive(false);
@@ -142,6 +142,7 @@ namespace GameUI.Runtime
 
         // Variables privées
         [SerializeField] GameObject _buttonActivation;
+        [SerializeField] GameObject _adventurersOnThisQuestPanel;
         List<AdventurerClass> _adventurersSelected = new List<AdventurerClass>();
 
         #endregion

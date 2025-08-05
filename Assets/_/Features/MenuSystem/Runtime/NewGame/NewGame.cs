@@ -1,7 +1,9 @@
-using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Adventurer.Runtime;
 using Core.Runtime;
 using Player.Runtime;
+using Quests.Runtime;
 using TMPro;
 using UnityEngine;
 
@@ -35,6 +37,9 @@ namespace MenuSystem.Runtime
                 PlayerClass newPlayerClass = new PlayerClass(cleanedName, 1, 1000, 5);
                 string saveName = newPlayerClass.GuildName.Replace(" ", "_");
                 SetFact<PlayerClass>(saveName, newPlayerClass, FactPersistence.Persistent);
+                SetFact<GameTime>("game_time", new GameTime(), FactPersistence.Persistent);
+                SetFact<List<AdventurerClass>>("my_adventurers", new List<AdventurerClass>(), FactPersistence.Persistent);
+                SetFact<List<QuestClass>>("active_quests", new List<QuestClass>(), FactPersistence.Persistent);;
                 GameManager.Instance.Profile = saveName;
                 SaveFacts();
                 SceneLoader.Instance.LoadScene("Game");

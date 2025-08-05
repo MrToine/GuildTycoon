@@ -31,6 +31,7 @@ namespace Core.Runtime
 
         public void SetFact<T>(string key, T value, BaseMonobehaviour.FactPersistence persistence)
         {
+            Debug.Log($"[FACT LOAD] Key = {key}, TargetType = {typeof(T)}, RawValue = {value} ({value?.GetType()})");
             if (_facts.TryGetValue(key, out var existingFact))
             {
                 if (existingFact is Fact<T> typedFact)

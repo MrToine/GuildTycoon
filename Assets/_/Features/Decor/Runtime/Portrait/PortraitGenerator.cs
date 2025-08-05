@@ -21,13 +21,7 @@ namespace Decor.Runtime
 
         #region Unity API
         
-        void Awake()
-        {
-        }
-        
-        private void OnDestroy()
-        {
-        }
+        //
 
         #endregion
 
@@ -39,6 +33,11 @@ namespace Decor.Runtime
 
         public void GeneratePortrait(AdventurerClass adventurerClass, GameObject prefab)
         {
+            if (!gameObject.activeInHierarchy)
+            {
+                Warning("PortraitRig est inactif, génération de portrait annulée.");
+                return;
+            }
             _queue.Enqueue((adventurerClass, prefab));
             if (!_isProcessing)
             {
@@ -73,7 +72,7 @@ namespace Decor.Runtime
             }
 
             _isProcessing = false;
-            gameObject.SetActive(false); // désactive le studio une fois fini
+            gameObject.SetActive(false);
         }
         
         #endregion

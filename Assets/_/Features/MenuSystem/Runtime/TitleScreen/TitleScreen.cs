@@ -25,8 +25,7 @@ namespace MenuSystem.Runtime.TitleScreen
             LocalizationSystem.Instance.LocalizeAllTextsIn(_newGamePanel.transform);
             LocalizationSystem.Instance.LocalizeAllTextsIn(_settingsPanel.transform);
             LocalizationSystem.Instance.LocalizeAllTextsIn(_loadPanel.transform);
-            
-            Continue();
+            //Continue();
         }
         private void Update()
         {

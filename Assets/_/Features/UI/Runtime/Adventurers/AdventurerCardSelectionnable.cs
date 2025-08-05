@@ -2,7 +2,7 @@ using System;
 using Adventurer.Runtime;
 using Core.Runtime;
 using EventSystem.Runtime;
-using Quests.Runtime._.Features.Quests.Runtime;
+using Quests.Runtime;
 using UnityEngine;
 using UnityEngine.UI;
 
