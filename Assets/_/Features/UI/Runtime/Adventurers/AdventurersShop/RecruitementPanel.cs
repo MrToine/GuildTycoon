@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Adventurer.Runtime;
 using UnityEngine;
 using Core.Runtime;
@@ -104,9 +105,16 @@ namespace GameUI.Runtime
             {
                 playerClass.AdventurersCount += 1;
                 playerClass.Money -= price;
-                SetFact<AdventurerClass>(newRecruit.ID.ToString(), newRecruit, FactPersistence.Persistent);
+                if (!FactExists<List<AdventurerClass>>("my_adventurers", out _))
+                {
+                    SetFact<List<AdventurerClass>>("my_adventurers", new List<AdventurerClass>(), FactPersistence.Persistent);
+                }
+                List<AdventurerClass> myAdventurers = GetFact<List<AdventurerClass>>("my_adventurers");
+                myAdventurers.Add(newRecruit);
                 SaveFacts();
+                _photoStudio.SetActive(true);
                 AdventurerSignals.RaiseSpawnRequested(newRecruit);
+                AdventurerSignals.RaiseRefreshAdventurers();
                 Destroy(go);
             }
         }
@@ -118,6 +126,7 @@ namespace GameUI.Runtime
 
         private int _nextId = 0;
         [SerializeField] GameObject _adventurerPrefab;
+        [SerializeField] GameObject _photoStudio;
 
         #endregion
     }

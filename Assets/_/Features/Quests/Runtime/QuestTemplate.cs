@@ -13,7 +13,7 @@ namespace Quests.Runtime
         public string m_description;
         public string m_objective;
         public QuestDifficultyEnum m_difficulty;
-        public float m_duration;
+        public int m_duration;
         public List<ItemReward> m_rewards;
         public int m_minLevel;
         public QuestClass ToQuestClass()

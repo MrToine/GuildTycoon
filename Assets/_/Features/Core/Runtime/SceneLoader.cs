@@ -74,6 +74,18 @@ namespace Core.Runtime
 
         private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            if (FactExists<GameTime>("game_time", out _))
+            {
+                GameTime gameTime = GetFact<GameTime>("game_time");
+                GameManager.Instance.UpdateGameTime(gameTime);
+                GameManager.Instance.CurrentGameTime = gameTime.TotalSeconds;
+                GameManager.Instance.LaunchGameTime();
+            }
+            else
+            {
+                Error("<game_time> n'existes pas dans les Facts");
+            }
+            
             OnSceneLoaded?.Invoke(scene);
         }
         

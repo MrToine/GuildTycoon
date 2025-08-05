@@ -23,7 +23,7 @@ namespace Decor.Runtime
         {
             AdventurerSignals.OnAdventurerSpawnRequested += OnSpawnAdventurerModel;
             
-            List<AdventurerClass> allAdventurers = GetAllFactsOfType<AdventurerClass>();
+            List<AdventurerClass> allAdventurers = GetFact<List<AdventurerClass>>("my_adventurers");
 
             foreach (AdventurerClass adventurer in allAdventurers)
             {

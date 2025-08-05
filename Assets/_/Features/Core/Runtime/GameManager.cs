@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -80,6 +81,32 @@ namespace Core.Runtime
                 _localTexts = value;
             }
         }
+
+        public int CurrentGameTime
+        {
+            get
+            {
+                return _currentGameTime;
+            }
+            set
+            {
+                _currentGameTime = value;
+            }
+        }
+
+        public bool LaunchedTime
+        {
+            get
+            {
+                return _launchedTime;
+            }
+            set
+            {
+                _launchedTime = value;
+            }
+        }
+        
+        public static event Action<int> OnTimeAdvanced;
         
         #endregion
 
@@ -99,18 +126,18 @@ namespace Core.Runtime
             // Sinon, cette instance devient l’instance unique
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            
+
             m_gameFacts = new FactDictionnary();
             _localTexts = new Dictionary<string, string>();
-            
+
             LoadFacts("GeneralSettings");
+            _fact = m_gameFacts;
             CurrentLanguage = m_gameFacts.GetFact<string>("language");
-            
+
             if (!m_gameFacts.FactExists<string>("language", out _))
             {
                 m_gameFacts.SetFact("language", "fr", FactPersistence.Persistent);
             }
-            
             LocalizationSystem.Instance.LoadLanguage();
         }
 
@@ -119,15 +146,33 @@ namespace Core.Runtime
 
         #region Main Methods
 
-        public void CreateObject(GameObject prefab, Vector3 position)
-        {
-            Instantiate(prefab, position, Quaternion.identity);
-        }
-
         public void ReloadScene()
         {
             string sceneName = SceneManager.GetActiveScene().name;
             _sceneLoader.LoadScene(sceneName);
+        }
+
+        public void UpdateGameTime(GameTime gameTime)
+        {
+            _gameTime = gameTime;
+        }
+        
+        // Time Gestion
+        public void AdvanceTime(int secondes)
+        {
+            if (secondes == 10)
+            {
+                Info($"Time : {_gameTime.SnapTime().ToString()}");
+            }
+            _gameTime.Advance(secondes);
+            OnTimeAdvanced?.Invoke(_gameTime.TotalSeconds);
+        }
+
+        public void LaunchGameTime()
+        {
+            if (LaunchedTime) return;
+            LaunchedTime = true;
+            StartCoroutine(TimeTickLoop());
         }
 
         #endregion
@@ -136,6 +181,15 @@ namespace Core.Runtime
         #region Utils
 
         /* Fonctions privées utiles */
+        private IEnumerator TimeTickLoop()
+        {
+            while (true)
+            {
+                yield return new WaitForSecondsRealtime(1f);
+                AdvanceTime(1);
+                _currentGameTime++;
+            }
+        }
 
         #endregion
 
@@ -149,7 +203,10 @@ namespace Core.Runtime
         private string _profile;
         private string _currentLanguage = "en";
         private Dictionary<string, string> _localTexts;
-        
+        bool _launchedTime;
+        int _currentGameTime = 0;
+        GameTime _gameTime;
+
         #endregion
     }
 }

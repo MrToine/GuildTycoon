@@ -41,7 +41,12 @@ namespace GameUI.Runtime
                     .Where(q => q.m_minLevel <= _player.GuildLevel)
                     .ToList();
 
-                List<string> acceptedQuestNames = GetFact<List<string>>("quests");
+                List<string> acceptedQuestNames = new List<string>();
+                if (FactExists<List<string>>("quests", out _))
+                {
+                    Info("Les quêtes existes");
+                    acceptedQuestNames = GetFact<List<string>>("quests");
+                }
 
                 foreach (var quest in availableTemplates)
                 {

@@ -3,13 +3,12 @@ using EventSystem.Runtime;
 using Adventurer.Runtime;
 using Core.Runtime;
 using Quests.Runtime;
-using Quests.Runtime._.Features.Quests.Runtime;
 using TMPro;
 using UnityEngine;
 
 namespace GameUI.Runtime
 {
-    public class AdventurersPanel : BaseMonobehaviour
+    public class AdventurersPanel : BasePanel
     {
         #region Unity API
 
@@ -71,15 +70,16 @@ namespace GameUI.Runtime
         }
 
         List<AdventurerClass> FilterAdventurers(AdventurerSortEnum sortType)
-        {
-            List<AdventurerClass> allAdventurers = GetAllFactsOfType<AdventurerClass>();
-
+        { 
+            List<AdventurerClass> allAdventurers = GetFact<List<AdventurerClass>>("my_adventurers");
             switch (sortType)
             {
                 case AdventurerSortEnum.Available:
                     return allAdventurers.FindAll(a => a.IsAvailable);
                 case AdventurerSortEnum.NotAvailable:
                     return allAdventurers.FindAll(a => !a.IsAvailable);
+                case AdventurerSortEnum.AssignedToQuest:
+                    return QuestManager.Instance.AssignedAdventurers;
                 case AdventurerSortEnum.None:
                     return allAdventurers;
                 default:

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Runtime;
+using EventSystem.Runtime;
 using Quests.Runtime;
 using TMPro;
 using UnityEngine;
@@ -20,11 +21,28 @@ namespace GameUI.Runtime
 
         private void Start()
         {
+            QuestSignals.OnRefresh += QuestList;
+            QuestManager.OnQuestCompleted += QuestCompleted;
+            
             foreach (var txt in GetComponentsInChildren<TMP_Text>())
             {
                 txt.text = LocalizationSystem.Instance.GetLocalizedText(txt.text);
             }
 
+            QuestList();
+        }
+
+        #endregion
+        
+        #region Utils
+
+        void QuestList()
+        {
+            foreach (Transform child in _panel.transform)
+            {
+                Destroy(child.gameObject);
+            }
+            
             if (FactExists<List<string>>("quests", out _))
             {
                 List<string> quests = GetFact<List<string>>("quests");
@@ -35,17 +53,18 @@ namespace GameUI.Runtime
                 }
             }
         }
-
-        #endregion
         
-        #region Utils
-
         void DisplayQuest(string questName)
         {
             GameObject questGO = Instantiate(_questMiniPrefab, _panel.transform);
             TMP_Text questNameLabel = questGO.GetComponentInChildren<TMP_Text>();
             questNameLabel.text = LocalizationSystem.Instance.GetLocalizedText(questName);
             questGO.GetComponent<InteractionQuestCard>().SetQuest(questName);
+        }
+
+        void QuestCompleted(QuestClass quest)
+        {
+            //
         }
         
         #endregion
