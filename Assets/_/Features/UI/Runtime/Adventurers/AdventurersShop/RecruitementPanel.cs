@@ -68,10 +68,10 @@ namespace GameUI.Runtime
 
         public void GenerateAdventurer(int nbAdventurers = 1)
         {
-            int numbers = Random.Range(5, nbAdventurers);
+            int numbers = Random.Range(5, nbAdventurers + 1);
             for (int i = 0; i < numbers; i++)
             {
-                AdventurerClass newRecruit = m_adventurersSO.CreateAdventurer(System.Guid.NewGuid());
+                AdventurerClass newRecruit = m_adventurersSO.CreateAdventurer();
                 
                 DisplayHeroCard(newRecruit);
             }

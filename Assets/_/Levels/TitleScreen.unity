@@ -428,7 +428,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 163989170290212410, guid: adfb75df64ce143cb95a53ac495f35f2, type: 3}
       propertyPath: m_isVerbose
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 381807660910884108, guid: adfb75df64ce143cb95a53ac495f35f2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

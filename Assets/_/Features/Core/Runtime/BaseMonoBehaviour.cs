@@ -60,6 +60,11 @@ namespace Core.Runtime
         
         #region Save System
 
+        protected void GenerateProfile(string profileName)
+        {
+            
+        }
+
         protected List<string> GetAllSaves()
         {
             return GameFacts.GetAllSaves();
@@ -73,14 +78,7 @@ namespace Core.Runtime
                 slot = slotName;
             }
             
-            if (GameFacts.SaveFacts(slot))
-            {
-                Info("Données sauvegardées avec succès dans le fichier save.json");
-            }
-            else
-            {
-                Error("Failed to save facts");
-            }
+            GameFacts.SaveFacts(slot);
         }
 
         protected void LoadFacts(string slotName = "")
@@ -91,14 +89,7 @@ namespace Core.Runtime
                 slot = slotName;
             }
             
-            if (GameFacts.LoadFacts(slot))
-            {
-                Info("Données chargées avec succès");
-            }
-            else
-            {
-                Error("Failed to load facts");
-            }
+            GameFacts.LoadFacts(slot);
         }
 
         protected void DeleteSaveFile()
@@ -112,20 +103,17 @@ namespace Core.Runtime
         
         protected void Info(string message)
         {
-            if (!m_isVerbose) return;
-            Debug.Log(message, this);
+            // Debug supprimé
         }
 
         protected void Error(string message)
         {
-            if (!m_isVerbose) return;
-            Debug.LogError(message, this);
+            // Debug supprimé
         }
 
         protected void Warning(string message)
         {
-            if (!m_isVerbose) return;
-            Debug.LogWarning(message, this);
+            // Debug supprimé
         }
         
         #endregion

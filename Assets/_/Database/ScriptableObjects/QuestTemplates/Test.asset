@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521b71060d404540bd5b9baaf3a74cf4, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: 
-  m_title: QuestTest
-  m_description: A simple test for quest system
-  m_objective: nothing
-  m_difficulty: 4
-  m_duration: 1
-  m_rewards:
-  - m_itemDefinition: {fileID: 11400000, guid: dfb46d9b898b7413fb5b83e85e586dcd, type: 2}
-    m_quantity: 0
-  m_minLevel: 1
+  data:
+    _name: Test
+    _description: Simple test for a quest system
+    _objective: Nothing
+    _duration: 2
+    _difficulty: 4
+    _rewards:
+    - m_itemDefinition: {fileID: 11400000, guid: dfb46d9b898b7413fb5b83e85e586dcd, type: 2}
+      m_quantity: 0
+    _minLevel: 1
+    _eventPack: {fileID: 11400000, guid: 5cdbfbd8202804cc69f3767cf82848ae, type: 2}

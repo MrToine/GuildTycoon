@@ -11,7 +11,7 @@ namespace Quests.Runtime
         public QuestClass GenerateRandomQuest()
         {
             var randomTemplate = questTemplates[Random.Range(0, questTemplates.Count)];
-            return randomTemplate.ToQuestClass();
+            return randomTemplate.ToQuestClass(QuestStateEnum.Disponible);
         }
     }
 }

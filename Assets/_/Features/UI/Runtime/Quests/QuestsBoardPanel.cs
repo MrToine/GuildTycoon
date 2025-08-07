@@ -38,19 +38,19 @@ namespace GameUI.Runtime
             if (factory != null)
             {
                 var availableTemplates = factory.questTemplates
-                    .Where(q => q.m_minLevel <= _player.GuildLevel)
+                    .Where(q => q.data.MinLevel <= _player.GuildLevel)
                     .ToList();
 
-                List<string> acceptedQuestNames = new List<string>();
-                if (FactExists<List<string>>("quests", out _))
+                Dictionary<string, QuestStateEnum> acceptedQuestNames = new Dictionary<string, QuestStateEnum>();
+                if (FactExists<Dictionary<string, QuestStateEnum>>("quests", out _))
                 {
                     Info("Les quêtes existes");
-                    acceptedQuestNames = GetFact<List<string>>("quests");
+                    acceptedQuestNames = GetFact<Dictionary<string, QuestStateEnum>>("quests");
                 }
 
                 foreach (var quest in availableTemplates)
                 {
-                    if (acceptedQuestNames != null && acceptedQuestNames.Contains(quest.m_title))
+                    if (acceptedQuestNames != null && acceptedQuestNames.ContainsKey(quest.data.Name))
                         continue;
 
                     DisplayCard(quest);
@@ -79,7 +79,7 @@ namespace GameUI.Runtime
         {
             GameObject GO = Instantiate(_questCardPrefab, _panel.transform);
             QuestCardUI card = GO.GetComponent<QuestCardUI>();
-            card.Setup(quest.ToQuestClass());
+            card.Setup(quest.ToQuestClass(QuestStateEnum.Disponible));
         }
 
         #endregion

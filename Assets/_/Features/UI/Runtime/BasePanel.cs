@@ -34,7 +34,7 @@ namespace GameUI.Runtime
 
         public void Refresh(string panelName)
         {
-            Warning($"{panelName} -> Actualisé");
+            // Debug supprimé
         }
 
         #endregion

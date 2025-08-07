@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Adventurer.Runtime;
 using Core.Runtime;
 using EventSystem.Runtime;
+using Item.Runtime;
 using Quests.Runtime;
 using TMPro;
 using UnityEngine;
@@ -79,12 +81,19 @@ namespace GameUI.Runtime
             m_description.text = LocalizationSystem.Instance.GetLocalizedText(quest.Description);
             m_objective.text = LocalizationSystem.Instance.GetLocalizedText(quest.Objective);
             m_reward.text = RewardsListJoined(quest.Rewards);
+            
+            Info($"         ℹ️[InfoQuestPanel.cs] La quête {quest.Name} est dans l'état : {quest.State}.");
 
-            switch (QuestManager.Instance.CurrentQuest.State)
+            switch (quest.State)
             {
                 case QuestStateEnum.Disponible:
                     _buttonActivation.gameObject.SetActive(true);
                     _adventurersOnThisQuestPanel.SetActive(false);
+                    break;
+                case QuestStateEnum.Completed:
+                    _buttonActivation.gameObject.SetActive(false);
+                    _adventurersOnThisQuestPanel.SetActive(false);
+                    _adventurersSelection.SetActive(false);
                     break;
                 default:
                     _buttonActivation.gameObject.SetActive(false);
@@ -118,9 +127,11 @@ namespace GameUI.Runtime
         #region Utils
 
         /* Fonctions privées utiles */
-        string RewardsListJoined(List<string> rewards)
+        string RewardsListJoined(List<ItemReward> rewards)
         {
-            return string.Join(", ", rewards);
+            return string.Join(", ", rewards.Select(r => r.m_itemDefinition.DisplayNameKey != null
+                ? LocalizationSystem.Instance.GetLocalizedText(r.m_itemDefinition.DisplayNameKey)
+                : "???"));
         }
 
         void HandleAddAdventurersFromQuest(AdventurerClass adventurer)
@@ -143,6 +154,7 @@ namespace GameUI.Runtime
         // Variables privées
         [SerializeField] GameObject _buttonActivation;
         [SerializeField] GameObject _adventurersOnThisQuestPanel;
+        [SerializeField] GameObject _adventurersSelection;
         List<AdventurerClass> _adventurersSelected = new List<AdventurerClass>();
 
         #endregion

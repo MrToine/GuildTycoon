@@ -40,6 +40,11 @@ namespace GameUI.Runtime
         {
             QuestManager.OnQuestCompleted += ChangeAvailable;
         }
+        
+        void OnDestroy()
+        {
+            QuestManager.OnQuestCompleted -= ChangeAvailable;
+        }
 
         public void setup(AdventurerClass adventurerClass)
         {

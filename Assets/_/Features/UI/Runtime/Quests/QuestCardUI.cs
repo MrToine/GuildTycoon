@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Runtime;
 using EventSystem.Runtime;
+using Item.Runtime;
 using Quests.Runtime;
 using TMPro;
 using UnityEngine;
@@ -57,15 +58,8 @@ namespace GameUI.Runtime
         public void AcceptQuest()
         {
             Info($"Le joueur à accepté la quête {_quest.Name}");
-
-            if (!FactExists<List<string>>("quests", out _))
-            {
-                Info("Aucune quête, on crée la liste dans la save");
-                SetFact<List<string>>("quests", new List<string>(), FactPersistence.Persistent);
-            }
-            
-            List<string> quests = GetFact<List<string>>("quests");
-            quests.Add(_quest.Name);
+            Dictionary<string, QuestStateEnum> quests = GetFact<Dictionary<string, QuestStateEnum>>("quests");
+            quests.Add(_quest.Name, QuestStateEnum.Disponible);
             SaveFacts();
             QuestSignals.RaiseRefreshQuests();
             Destroy(gameObject); 
@@ -76,9 +70,11 @@ namespace GameUI.Runtime
 
         #region Utils
 
-        string RewardsListJoined(List<string> rewards)
+        string RewardsListJoined(List<ItemReward> rewards)
         {
-            return string.Join(", ", rewards);
+            return string.Join(", ", rewards.Select(r => r.m_itemDefinition.DisplayNameKey != null
+                ? LocalizationSystem.Instance.GetLocalizedText(r.m_itemDefinition.DisplayNameKey)
+                : "???"));
         }
 
         #endregion

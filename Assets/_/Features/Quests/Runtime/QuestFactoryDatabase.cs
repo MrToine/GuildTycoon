@@ -16,7 +16,7 @@ namespace Quest.Runtime
         {
             Debug.Log($"Get factory for level {guildLevel}");
             return m_factories
-                .Where(factory => factory.questTemplates.Any(template => template.m_minLevel <= guildLevel))
+                .Where(factory => factory.questTemplates.Any(template => template.data.MinLevel <= guildLevel))
                 .OrderBy(f => Random.value)
                 .FirstOrDefault();
         }
@@ -27,7 +27,7 @@ namespace Quest.Runtime
             {
                 foreach (var template in factory.questTemplates)
                 {
-                    if (template.m_title == title)
+                    if (template.data.Name == title)
                     {
                         return template;
                     }

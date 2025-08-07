@@ -93,7 +93,7 @@ namespace Core.Runtime
         {
             foreach (var slot in Directory.GetFiles(Application.persistentDataPath))
             {
-                if (slot.Contains("_save.json") && !slot.Contains("GeneralSettings"))
+                if (slot.Contains("_save.json") && (!slot.Contains("GeneralSettings") || !slot.Contains("continue")))
                 {
                     string fileName = Path.GetFileNameWithoutExtension(slot);
                     if (fileName.EndsWith("_save"))
@@ -116,7 +116,9 @@ namespace Core.Runtime
 
             int nbFiles = Directory.GetFiles(Application.persistentDataPath, "*.json").Length;
             string fileSettings = Path.Combine(Application.persistentDataPath, "GeneralSettings_save.json");
+            string fileContinue = Path.Combine(Application.persistentDataPath, "continue_save.json");
             if (File.Exists(fileSettings)) nbFiles--; // On retire le fichier nommé GeneralSettings_save.json
+            if (File.Exists(fileContinue)) nbFiles--; // On retire le fichier nommé continue_save.json
             
             if(nbFiles <= 0) return false;
             

@@ -35,7 +35,6 @@ namespace Decor.Runtime
         {
             if (!gameObject.activeInHierarchy)
             {
-                Warning("PortraitRig est inactif, génération de portrait annulée.");
                 return;
             }
             _queue.Enqueue((adventurerClass, prefab));

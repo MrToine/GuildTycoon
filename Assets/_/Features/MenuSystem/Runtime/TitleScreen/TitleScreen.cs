@@ -25,7 +25,6 @@ namespace MenuSystem.Runtime.TitleScreen
             LocalizationSystem.Instance.LocalizeAllTextsIn(_newGamePanel.transform);
             LocalizationSystem.Instance.LocalizeAllTextsIn(_settingsPanel.transform);
             LocalizationSystem.Instance.LocalizeAllTextsIn(_loadPanel.transform);
-            //Continue();
         }
         private void Update()
         {
@@ -44,7 +43,12 @@ namespace MenuSystem.Runtime.TitleScreen
 
         public void Continue()
         {
-            GameManager.Instance.Profile = "Guilde_de_Toine";
+            GameManager.Instance.Profile = "continue";
+            Info($"On charge le faux profile continue : {GameManager.Instance.Profile}");
+            LoadFacts();
+            string profileName = GetFact<string>("profile");
+            Info($"On charge le vrai profile : {profileName}");
+            GameManager.Instance.Profile = profileName;
             LoadFacts();
             SceneLoader.Instance.LoadScene("Game");
         }

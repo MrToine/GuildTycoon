@@ -79,7 +79,7 @@ namespace GameUI.Runtime
                 case AdventurerSortEnum.NotAvailable:
                     return allAdventurers.FindAll(a => !a.IsAvailable);
                 case AdventurerSortEnum.AssignedToQuest:
-                    return QuestManager.Instance.AssignedAdventurers;
+                    return QuestClass.GetAdventurersFromId(QuestManager.Instance.AssignedAdventurers);
                 case AdventurerSortEnum.None:
                     return allAdventurers;
                 default:

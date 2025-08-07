@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Core.Runtime;
-using Item.Runtime;
 using UnityEngine;
 
 namespace Quests.Runtime
@@ -9,33 +8,32 @@ namespace Quests.Runtime
     [CreateAssetMenu(fileName = "Quest Template", menuName = "Guild Tycoon/Quests/Template", order = 0)]
     public class QuestTemplate : ScriptableObject
     {
-        public string m_title;
-        public string m_description;
-        public string m_objective;
-        public QuestDifficultyEnum m_difficulty;
-        public int m_duration;
-        public List<ItemReward> m_rewards;
-        public int m_minLevel;
-        public QuestClass ToQuestClass()
+        public QuestClass data;
+        public QuestClass ToQuestClass(QuestStateEnum stateQuest)
         {
             List<string> rewardsName = new List<string>();
-            foreach (var reward in m_rewards)
+            foreach (var reward in data.Rewards)
             {
                 if (reward == null)
                 {
-                    Debug.LogWarning("Reward is null in QuestTemplate: " + m_title);
+                    Debug.LogWarning("Reward is null in QuestTemplate: " + data.Name);
                     continue;
                 }
                 if (reward.m_itemDefinition == null)
                 {
-                    Debug.LogWarning("ItemDefinition is null for a reward in quest: " + m_title);
+                    Debug.LogWarning("ItemDefinition is null for a reward in quest: " + data.Name);
                     continue;
                 }
                 string reward_name_amount =
                     $"{LocalizationSystem.Instance.GetLocalizedText(reward.m_itemDefinition.name)}";
                 rewardsName.Add($"{reward_name_amount} x{reward.m_quantity}");
             }
-            return new QuestClass(Guid.NewGuid(), m_title, m_description, m_objective, m_duration, m_difficulty, rewardsName, m_minLevel);
+            QuestClass quest = new QuestClass(new Guid(), data.Name, data.Description, data.Objective, data.Duration, data.Difficulty, data.Rewards, data.MinLevel);
+            quest.State = stateQuest;
+            
+            quest.EventPack = data.EventPack;
+            quest.InitializeEvents(data.EventPack);
+            return quest;
         }
     }
 }

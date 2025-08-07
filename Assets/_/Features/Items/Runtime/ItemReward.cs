@@ -1,6 +1,4 @@
-using Item.Runtime;
-
-namespace Quests.Runtime
+namespace Item.Runtime
 {
     [System.Serializable]
     public class ItemReward

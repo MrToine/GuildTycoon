@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Adventurer.Runtime;
-using Goals.Runtime;
+using Core.Runtime;
+using Item.Runtime;
 using UnityEngine;
 
 namespace Quests.Runtime
@@ -46,10 +47,10 @@ namespace Quests.Runtime
             set { _difficulty = value; }
         }
 
-        public List<string> Rewards
+        public List<ItemReward> Rewards
         {
             get { return _rewards; }
-            set { _rewards = new List<string>(); }
+            set { _rewards = new List<ItemReward>(); }
         }
 
         public QuestStateEnum State
@@ -64,49 +65,82 @@ namespace Quests.Runtime
             set { _minLevel = value; }
         }
 
-        public List<AdventurerClass> AssignedAdventurers
+        public List<Guid> AssignedAdventurersID
         {
             get
             {
-                return _assignedAdventurers;
+                return _assignedAdventurersID;
             }
             set
             {
-                _assignedAdventurers = value;
+                _assignedAdventurersID = value;
             }
         }
-
-        public GoalSystem Goals;
-
-        public int EndGameSeconds
+        
+        public int StartSeconds
         {
             get
             {
-                return _endGameSeconds;
+                return _StartSeconds;
             }
             set
             {
-                _endGameSeconds = value;
+                _StartSeconds = value;
             }
         }
 
+        public int EndSeconds
+        {
+            get
+            {
+                return _endSeconds;
+            }
+            set
+            {
+                _endSeconds = value;
+            }
+        }
+
+        public QuestEventPackSO EventPack
+        {
+            get
+            {
+                return _eventPack;
+            }
+            set
+            {
+                _eventPack = value;
+            }
+        }
+
+        public List<QuestEvent> ActiveEvents => _activeEvents;
+        public List<string> TriggeredEventsDescriptionKeys = new List<string>();
+        
         #endregion
         
         #region Parameters
 
+        [SerializeField]  string _name;
+        [SerializeField]  string _description;
+        [SerializeField]  string _objective;
+        [SerializeField]  int _duration;
+        [SerializeField]  QuestDifficultyEnum _difficulty;
+        [SerializeField]  List<ItemReward> _rewards;
+        [SerializeField]  int _minLevel; 
+        [SerializeField]  QuestEventPackSO _eventPack;
+        
         Guid _id;
-        string _name;
-        string _description;
-        string _objective;
-        int _duration;
-        QuestDifficultyEnum _difficulty;
-        List<string> _rewards;
         QuestStateEnum _state;
-        int _minLevel;
-        List<AdventurerClass> _assignedAdventurers;
-        int _endGameSeconds;
+        int _StartSeconds;
+        int _endSeconds;
+        List<Guid> _assignedAdventurersID = new List<Guid>();
+        List<QuestEvent> _activeEvents = new List<QuestEvent>();
+        
+        #endregion
+        
+        #region Constructor
 
-        public QuestClass(Guid id, string name, string description, string objective, int duration, QuestDifficultyEnum difficulty, List<string> reward, int minLevel = 1)
+        public QuestClass(Guid id, string name, string description, string objective, int duration, QuestDifficultyEnum difficulty, List<ItemReward> reward, int minLevel = 1)
         {
             _id = id;
             _name = name;
@@ -120,6 +154,69 @@ namespace Quests.Runtime
         }
 
         #endregion
+        
+        #region Methods
+
+        public void InitializeEvents(QuestEventPackSO pack)
+        {
+            ActiveEvents.Clear();
+            
+            var pool = new List<QuestEventSO>(pack.availableEvents);
+            int toPick = Mathf.Min(pack.maxEventsToPick, pool.Count);
+
+            for (int i = 0; i < toPick; i++)
+            {
+                int index = UnityEngine.Random.Range(0, pool.Count);
+                var pickedSO = pool[index];
+                pool.RemoveAt(index);
+
+                ActiveEvents.Add(pickedSO.ToRuntime()); 
+            }
+        }
+        
+        public static List<AdventurerClass> GetAdventurersFromId(List<Guid> adventurersId)
+        {
+            var adventurers = new List<AdventurerClass>();
+
+            if (adventurersId == null || GameManager.Instance == null || GameManager.Instance.Fact == null)
+                return adventurers;
+
+            foreach (var adventurerId in adventurersId)
+            {
+                var adventurer = GetOneAdventurerFromId(adventurerId);
+                if (adventurer != null)
+                    adventurers.Add(adventurer);
+            }
+
+            return adventurers;
+        }
+
+        public static AdventurerClass GetOneAdventurerFromId(Guid adventurerId)
+        {
+            if (GameManager.Instance.Fact.GetFact<List<AdventurerClass>>("my_adventurers") == null)
+            {
+                return null;
+            }
+            List<AdventurerClass> currentAdventurers = GameManager.Instance.Fact.GetFact<List<AdventurerClass>>("my_adventurers");
+            return currentAdventurers.Find(adventurer => adventurer.ID == adventurerId);
+        }
+
+        public static List<Guid> GetIdFromAdventurers(List<AdventurerClass> adventurers)
+        {
+            List<Guid> adventurersId = new List<Guid>();
+            foreach (var adventurer in adventurers)
+            {
+                adventurersId.Add(adventurer.ID);
+            }
+            return adventurersId;
+        }
+
+        public static Guid GetOneIdFromAdventurer(AdventurerClass adventurer)
+        {
+            List<AdventurerClass> currentAdventurers = GameManager.Instance.Fact.GetFact<List<AdventurerClass>>("my_adventurers");
+            return currentAdventurers.Find(adv => adv.ID == adventurer.ID).ID;
+        }
+        
+        #endregion
     }
 }
-

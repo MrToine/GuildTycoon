@@ -50,11 +50,9 @@ namespace Core.Runtime
 
         public void FakeLoading(string nextSceneName)
         {
-            Info("On vérifie que la scene Loading est disponible");
             if (SceneExists("Loading"))
             {
                 LoadScene("Loading");
-                Info($"level suivant {nextSceneName}");
                 StartCoroutine(WaitingLoading(nextSceneName));
             }
         }
@@ -67,7 +65,6 @@ namespace Core.Runtime
         private IEnumerator WaitingLoading(string nextSceneName)
         {
             int time = Random.Range(3, 6);
-            Info($"On attend {time} secondes et on charge la scene {nextSceneName}");
             yield return new WaitForSeconds(time);
             LoadScene(nextSceneName);
         }
@@ -83,7 +80,7 @@ namespace Core.Runtime
             }
             else
             {
-                Error("<game_time> n'existes pas dans les Facts");
+                // Debug supprimé
             }
             
             OnSceneLoaded?.Invoke(scene);

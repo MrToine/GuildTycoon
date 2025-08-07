@@ -7,6 +7,7 @@ namespace Adventurer.Runtime
         Archer,
         Paladin,
         Priest,
+        Mage,
         Barbarian,
     }
 }

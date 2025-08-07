@@ -160,10 +160,6 @@ namespace Core.Runtime
         // Time Gestion
         public void AdvanceTime(int secondes)
         {
-            if (secondes == 10)
-            {
-                Info($"Time : {_gameTime.SnapTime().ToString()}");
-            }
             _gameTime.Advance(secondes);
             OnTimeAdvanced?.Invoke(_gameTime.TotalSeconds);
         }
@@ -201,7 +197,7 @@ namespace Core.Runtime
         private FactDictionnary _fact;
         private bool _canPause;
         private string _profile;
-        private string _currentLanguage = "en";
+        private string _currentLanguage = "fr";
         private Dictionary<string, string> _localTexts;
         bool _launchedTime;
         int _currentGameTime = 0;

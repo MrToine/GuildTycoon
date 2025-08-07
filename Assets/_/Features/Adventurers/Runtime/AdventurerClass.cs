@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Adventurer.Runtime
 {
@@ -34,6 +35,18 @@ namespace Adventurer.Runtime
         {
             get { return _experience; }
             set { _experience = value; }
+        }
+        
+        public int Health
+        {
+            get { return _health; }
+            set { _health = value; }
+        }
+        
+        public int MaxHealth
+        {
+            get { return _maxHealth; }
+            set { _maxHealth = value; }
         }
 
         public int Strength
@@ -89,6 +102,10 @@ namespace Adventurer.Runtime
         AdventurerClassEnum _adventurerClassEnum;
         int _level;
         int _experience;
+
+        int _health;
+        int _maxHealth;
+        
         int _strength;
         int _defense;
         int _intelligence;
@@ -119,6 +136,10 @@ namespace Adventurer.Runtime
             _recruitmentDate = RecruitmentDate;
             _isAvailable = true;
             _equipments = new Dictionary<string, string>();
+            
+            // Calcule de la vie Max
+            _maxHealth = CalculateMaxHp();
+            //Debug.Log($">>>>>>> {_name }[{_adventurerClassEnum}] | Niveau {_level} | {_experience} exp | {_strength} force | {_defense} def | {_agility} agi | {_intelligence} int | {_maxHealth} Hp Max <<<<<<<<<");
         }
         
         #endregion
@@ -149,7 +170,42 @@ namespace Adventurer.Runtime
                 _experience -= requiredXP;
             }
         }
+
+        int CalculateMaxHp()
+        {
+            float classMultiplier = GetClassMultiplier();
+            return Mathf.RoundToInt((_strength + _defense + _level * 2) * classMultiplier);
+        }
         
+        private float GetClassMultiplier()
+        {
+            switch (_adventurerClassEnum)
+            {
+                case AdventurerClassEnum.Barbarian: return 1.5f;
+                case AdventurerClassEnum.Warrior: return 1.3f;
+                case AdventurerClassEnum.Paladin: return 1.2f;
+                case AdventurerClassEnum.Archer: return 1.0f;
+                case AdventurerClassEnum.Thief: return 0.9f;
+                case AdventurerClassEnum.Priest: return 0.8f;
+                default: return 1.0f;
+            }
+        }
+
+        public void TakeDamage(int effectValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Heal(int effectValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ApplyBuff(int effectValue)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

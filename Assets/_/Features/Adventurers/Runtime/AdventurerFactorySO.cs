@@ -14,17 +14,67 @@ namespace Adventurer.Runtime
         public int m_minStat;
         public int m_maxStat;
 
-        public AdventurerClass CreateAdventurer(Guid id)
+        public AdventurerClass CreateAdventurer()
         {
             string name = m_names[Random.Range(0, m_names.Count)];
             AdventurerClassEnum chosenClassEnum = m_classes[Random.Range(0, m_classes.Count)];
 
             int level = m_baseLevel;
             int xp = 0;
-            int strength = Random.Range(m_minStat, m_maxStat);
-            int defense = Random.Range(m_minStat, m_maxStat);
-            int agility = Random.Range(m_minStat, m_maxStat);
-            int intelligence = Random.Range(m_minStat, m_maxStat);
+            
+            int strength = 0;
+            int defense = 0;
+            int agility = 0;
+            int intelligence = 0;
+            
+            switch (chosenClassEnum)
+            {
+                case AdventurerClassEnum.Warrior:
+                    strength = Random.Range(14, 20);
+                    defense = Random.Range(10, 16);
+                    agility = Random.Range(6, 14);
+                    intelligence = Random.Range(4, 8);
+                    break;
+                case AdventurerClassEnum.Mage:
+                    strength = Random.Range(4, 8);
+                    defense = Random.Range(6, 10);
+                    agility = Random.Range(6, 10);
+                    intelligence = Random.Range(14, 20);
+                    break;
+                case AdventurerClassEnum.Archer:
+                    strength = Random.Range(4, 8);
+                    defense = Random.Range(6, 10);
+                    agility = Random.Range(14, 20);
+                    intelligence = Random.Range(4, 8);
+                    break;
+                case AdventurerClassEnum.Paladin:
+                    strength = Random.Range(10, 14);
+                    defense = Random.Range(14, 20);
+                    agility = Random.Range(4, 8);
+                    intelligence = Random.Range(8, 12);
+                    break;
+                case AdventurerClassEnum.Priest:
+                    strength = Random.Range(6, 10);
+                    defense = Random.Range(8, 12);
+                    agility = Random.Range(8, 12);
+                    intelligence = Random.Range(14, 20);
+                    break;
+                case AdventurerClassEnum.Thief:
+                    strength = Random.Range(8, 14);
+                    defense = Random.Range(8, 12);
+                    agility = Random.Range(14, 20);
+                    intelligence = Random.Range(4, 8);
+                    break;
+                case AdventurerClassEnum.Barbarian:
+                    strength = Random.Range(16, 20);
+                    defense = Random.Range(10, 14);
+                    agility = Random.Range(6, 10);
+                    intelligence = Random.Range(2, 6);
+                    break;
+                default:
+                    Debug.LogError($"Classe non gérée : {chosenClassEnum}");
+                    break;
+            }
 
             var modelParts = new Dictionary<string, string>();
             modelParts["Ears"] = $"EARS/Ears Type {Random.Range(1, 2)}";
@@ -43,7 +93,7 @@ namespace Adventurer.Runtime
             
             DateTime now = DateTime.Now;
             
-            return new AdventurerClass(id, name, chosenClassEnum, level, xp, strength, defense, agility, intelligence, modelParts, now);
+            return new AdventurerClass(Guid.NewGuid(), name, chosenClassEnum, level, xp, strength, defense, intelligence, agility, modelParts, now);
         }
     }
 }

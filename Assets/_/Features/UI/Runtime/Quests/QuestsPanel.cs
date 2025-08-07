@@ -43,18 +43,19 @@ namespace GameUI.Runtime
                 Destroy(child.gameObject);
             }
             
-            if (FactExists<List<string>>("quests", out _))
+            if (FactExists<Dictionary<string, QuestStateEnum>>("quests", out _))
             {
-                List<string> quests = GetFact<List<string>>("quests");
+                Dictionary<string, QuestStateEnum> quests = GetFact<Dictionary<string, QuestStateEnum>>("quests");
 
                 foreach (var quest in quests)
                 {
-                    DisplayQuest(quest);
+                    Info($"          52. 🚨 [QuestPanel.cs] La quête {quest.Key} est dans l'état : {quest.Value}.");
+                    DisplayQuest(quest.Key, quest.Value); //=> Key : Le nom de la quête, Value : Le State
                 }
             }
         }
         
-        void DisplayQuest(string questName)
+        void DisplayQuest(string questName, QuestStateEnum stateQuest)
         {
             GameObject questGO = Instantiate(_questMiniPrefab, _panel.transform);
             TMP_Text questNameLabel = questGO.GetComponentInChildren<TMP_Text>();
@@ -68,7 +69,8 @@ namespace GameUI.Runtime
                 questMini.m_check?.SetActive(isCompleted);
             }
             
-            questGO.GetComponent<InteractionQuestCard>().SetQuest(questName);
+            Info($"          71. 🚨 [QuestsPanel.cs.cs] La quête {questName} est dans l'état : {stateQuest}.");
+            questGO.GetComponent<InteractionQuestCard>().SetQuest(questName, stateQuest);
         }
 
         void QuestCompleted(QuestClass quest)

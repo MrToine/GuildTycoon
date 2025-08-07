@@ -39,6 +39,7 @@ namespace GameUI.Runtime
         /* Fonctions privées utiles */
         void HandleInfoPanel(QuestClass quest)
         {
+            Info($"         ℹ️[QuestUIController.cs] La quête {quest.Name} est dans l'état : {quest.State}.");
             _uiManager.ShowPanel(_infoQuestPanel);
             _infoQuestPanel.GetComponent<InfoQuestPanel>().ShowInfo(quest);
         }

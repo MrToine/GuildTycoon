@@ -35,12 +35,27 @@
     <in_quest>In mission</in_quest>
     
     <!-- QUESTS -->
-    <quest_title_1>Rats Invasion</quest_title_1>
-    <quest_desc_1>A cry of alarm rang out from the fields of old Marnel, a farmer living on the outskirts of a hamlet.\n\nFor several nights, his home has been besieged by a horde of aggressive rats, larger and more intelligent than average. Their eyes glow in the darkness, and their teeth gnaw through even the thickest beams of the barn. Tired, frightened, and at a loss for solutions, Marnel begs the guild for help.</quest_desc_1>
-    <quest_objective_1>Clean the farmer's house of these rodent invaders!</quest_objective_1>
-    <quest_title_2>Hamlet Troll</quest_title_2>
-    <quest_desc_2>A troll has gotten lost near a small hamlet. We must stop it from causing harm!</quest_desc_2>
-    <quest_objective_2>Kill a Troll</quest_objective_2>
+    <quests.1.title>Rats Invasion</quests.1.title>
+    <quests.1.desc>A cry of alarm rang out from the fields of old Marnel, a farmer living on the outskirts of a hamlet.\n\nFor several nights, his home has been besieged by a horde of aggressive rats, larger and more intelligent than average. Their eyes glow in the darkness, and their teeth gnaw through even the thickest beams of the barn. Tired, frightened, and at a loss for solutions, Marnel begs the guild for help.</quests.1.desc>
+    <quests.1.objective>Clean the farmer's house of these rodent invaders!</quests.1.objective>
+    <quests.2.title>Hamlet Troll</quests.2.title>
+    <quests.2.desc>A troll has gotten lost near a small hamlet. We must stop it from causing harm!</quests.2.desc>
+    <quests.2.objective>Kill a Troll</quests.2.objective>
+    
+    <!-- EVENTS -->
+    <!-- Events quests -->
+    <!--<quests.events.rats.infection.1>While scouting the barn, an adventurer notices claw marks forming a crude arrow on the floor, pointing deeper into the hay.</quests.events.rats.infection.1>
+    <quests.events.rats.infection.2>The team stumbles upon a circle of rats standing unnaturally still. As the adventurers approach, the rats silently disperse… in perfect synchrony.</quests.events.rats.infection.2>
+    <quests.events.rats.infection.3>One rat, larger than the rest, pauses at the edge of the forest and turns to stare at the adventurers. It bares its teeth, then vanishes into the mist.</quests.events.rats.infection.3>-->
+    <quests.events.rats.infection.1>En inspectant la grange, un aventurier remarque des traces de griffes formant une flèche grossière sur le sol, pointant vers un tas de foin.</quests.events.rats.infection.1>
+    <quests.events.rats.infection.2>Le groupe tombe sur un cercle de rats immobiles, figés dans une étrange posture. À leur approche, les rongeurs se dispersent silencieusement… dans une synchronisation parfaite.</quests.events.rats.infection.2>
+    <quests.events.rats.infection.3>Un rat, plus gros que les autres, s’arrête à la lisière de la forêt et fixe les aventuriers. Il montre les dents, puis disparaît dans la brume.</quests.events.rats.infection.3>
+    
+    <!-- Randoms -->
+    <event.plain.narrative.1>Les aventuriers trouvent une mystérieuse meule de fromage. L’un d’eux jure qu’elle lui parle.</event.plain.narrative.1>
+    <event.plain.narrative.2>En marchant, un héros trébuche... sur absolument rien. Dignité -1.</event.plain.narrative.2>
+    <event.plain.narrative.3>Un gobelin tente de vendre au groupe des « ongles de pied de dragon authentiques ». Un héros en achète un.</event.plain.narrative.3>
+    <event.plain.narrative.4>Un débat houleux éclate : la soupe, c’est un plat ou une boisson ? Le groupe se divise, 2 contre 2.</event.plain.narrative.4>
     
     <!-- ITEMS -->
     <item_gold>Gold</item_gold>
