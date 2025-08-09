@@ -11,7 +11,7 @@ namespace TestFacts.Runtime
         public void GetCurrentLanguage()
         {
             _localization.LoadLanguage();
-            Info($"Le jeu est actuellement en {GameManager.Instance.CurrentLanguage}");
+            // Affichage de la langue courante
         }
         
         [ContextMenu("Mettre en anglais")]

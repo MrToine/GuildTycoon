@@ -3,71 +3,153 @@ using System.Collections.Generic;
 using System.Linq;
 using Adventurer.Runtime;
 using Core.Runtime;
+using Quest.Runtime;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Quests.Runtime
 {
-    public class QuestManager: BaseMonobehaviour
+    public class QuestManager : BaseMonobehaviour
     {
+        #region Singleton
+
+        private static QuestManager _instance;
         public static QuestManager Instance => _instance ??= new QuestManager();
 
-        private QuestClass _currentQuest;
+        #endregion
 
-        public QuestClass CurrentQuest
-        {
-            get
-            {
-                return _currentQuest;
-            }
-            set
-            {
-                _currentQuest = value;
-            }
-        }
+        #region Events
 
-        public List<QuestClass> ActiveQuests
-        {
-            get
-            {
-                return _activeQuests;
-            }
-            set
-            {
-                _activeQuests = value;
-            }
-        }
-
-        public List<QuestClass> CompletedQuests
-        {
-            get
-            {
-                return _completedQuests;
-            }
-            set
-            {
-                _completedQuests = value;
-            }
-        }
-
-        public List<Guid> AssignedAdventurers
-        {
-            get
-            {
-                return _currentQuest.AssignedAdventurersID;;
-            }
-        }
-        
         public static event Action<QuestClass> OnQuestCompleted;
         public static event Action<QuestEvent> OnEventReceived;
         public static event Action<QuestClass> OnEventFromQuest;
-        
+
+        #endregion
+
+        #region Properties
+
+        private QuestClass _currentQuest;
+        public QuestClass CurrentQuest
+        {
+            get => _currentQuest;
+            set => _currentQuest = value;
+        }
+
+        private List<QuestClass> _activeQuests;
+        public List<QuestClass> ActiveQuests
+        {
+            get => _activeQuests;
+            set => _activeQuests = value;
+        }
+
+        private List<QuestClass> _completedQuests;
+        public List<QuestClass> CompletedQuests
+        {
+            get => _completedQuests;
+            set => _completedQuests = value;
+        }
+
+        public List<Guid> AssignedAdventurers => _currentQuest?.AssignedAdventurersID;
+
+        [SerializeField] private QuestFactoryDatabase _questDatabase;
+        public QuestFactoryDatabase QuestDatabase
+        {
+            get => _questDatabase;
+            set => _questDatabase = value;
+        }
+
+        private int _snapTime = 0;
+        public int currentTimeInQuest => _snapTime;
+
+        // Champ inutilisé - conservé pour référence future
+        private List<QuestEvent> inActiveEvents;
+
+        #endregion
+
+        #region Initialization
+
         public QuestManager()
         {
             GameManager.OnTimeAdvanced += CheckMissionsProgress;
         }
 
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Démarre une quête avec une équipe d'aventuriers
+        /// </summary>
         public void StartQuest(QuestClass quest, List<AdventurerClass> team, GameTime gameTime)
+        {
+            AssignAdventurersToQuest(quest, team);
+            SetQuestTimings(quest, gameTime);
+            UpdateQuestStatus(quest);
+        }
+
+        /// <summary>
+        /// Complète une quête et libère les aventuriers assignés
+        /// </summary>
+        public void CompleteQuest(QuestClass quest, List<Guid> team)
+        {
+            if (quest.State != QuestStateEnum.Active) return;
+
+            ReleaseAdventurers(team);
+            UpdateQuestCompletionStatus(quest);
+            SaveQuestProgress();
+        }
+
+        /// <summary>
+        /// Notifie les observateurs des quêtes complétées
+        /// </summary>
+        public void NotifyCompletedQuests()
+        {
+            foreach (var quest in _completedQuests)
+            {
+                OnQuestCompleted?.Invoke(quest);
+            }
+        }
+
+        /// <summary>
+        /// Vérifie si des aventuriers peuvent être sélectionnés pour la quête courante
+        /// </summary>
+        public bool CanSelectedAdventurers()
+        {
+            return _currentQuest != null && _currentQuest.State == QuestStateEnum.Disponible;
+        }
+
+        /// <summary>
+        /// Vérifie si une quête est complétée par son nom
+        /// </summary>
+        public bool IsQuestCompleted(string questName)
+        {
+            return ActiveQuests != null 
+                   && ActiveQuests.Any(q => q.Name == questName && q.State == QuestStateEnum.Completed);
+        }
+
+        /// <summary>
+        /// Résout une liste de quêtes à partir des données sauvegardées
+        /// </summary>
+        public List<QuestClass> ResolveQuestsList(List<QuestClass> questsFromSave)
+        {
+            List<QuestClass> quests = new List<QuestClass>();
+            foreach (var quest in questsFromSave)
+            {
+                QuestTemplate template = _questDatabase.GetTemplatesByName(quest.Name);
+                if (template == null) continue;
+                quests.Add(template.ToQuestClass(quest.State, quest.ID));
+            }
+            return quests;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Assigne des aventuriers à une quête
+        /// </summary>
+        private void AssignAdventurersToQuest(QuestClass quest, List<AdventurerClass> team)
         {
             foreach (var adventurer in team)
             {
@@ -76,129 +158,180 @@ namespace Quests.Runtime
                     quest.AssignedAdventurersID = new List<Guid>();
                 quest.AssignedAdventurersID.Add(adventurer.ID);
             }
-    
+        }
+
+        /// <summary>
+        /// Configure les temps de début et de fin d'une quête
+        /// </summary>
+        private void SetQuestTimings(QuestClass quest, GameTime gameTime)
+        {
             quest.State = QuestStateEnum.Active;
             quest.StartSeconds = gameTime.TotalSeconds;
             quest.EndSeconds = gameTime.TotalSeconds + (quest.Duration * 60);
-
-            _activeQuests.Add(quest);
         }
-        
-        void CheckMissionsProgress(int currentSeconds)
+
+        /// <summary>
+        /// Met à jour le statut d'une quête dans les listes actives et sauvegardées
+        /// </summary>
+        private void UpdateQuestStatus(QuestClass quest)
+        {
+            _activeQuests.Add(quest);
+            List<QuestClass> saveQuests = GetFact<List<QuestClass>>("quests");
+            foreach (var saveQuest in saveQuests)
+            {
+                if (saveQuest.Name == quest.Name)
+                {
+                    saveQuest.State = QuestStateEnum.Active;
+                    saveQuest.StartSeconds = quest.StartSeconds;
+                    saveQuest.EndSeconds = quest.EndSeconds;
+                }
+            }
+            SaveFacts();
+        }
+
+        /// <summary>
+        /// Libère les aventuriers assignés à une quête
+        /// </summary>
+        private void ReleaseAdventurers(List<Guid> team)
+        {
+            foreach (var adventurerId in team)
+            {
+                AdventurerClass adventurer = QuestClass.GetOneAdventurerFromId(adventurerId);
+                if (adventurer != null)
+                    adventurer.IsAvailable = true;
+            }
+        }
+
+        /// <summary>
+        /// Met à jour le statut de complétion d'une quête
+        /// </summary>
+        private void UpdateQuestCompletionStatus(QuestClass quest)
+        {
+            quest.State = QuestStateEnum.Completed;
+            _activeQuests.RemoveAll(q => q.Name == quest.Name);
+            _completedQuests.Add(quest);
+
+            List<QuestClass> quests = GetFact<List<QuestClass>>("quests");
+            QuestClass questToUpdate = quests.FirstOrDefault(q => q.ID == quest.ID);
+            if (questToUpdate != null)
+            {
+                questToUpdate.State = QuestStateEnum.Completed;
+            }
+
+            NotifyCompletedQuests();
+        }
+
+        /// <summary>
+        /// Sauvegarde les progrès des quêtes
+        /// </summary>
+        private void SaveQuestProgress()
+        {
+            SaveFacts();
+        }
+
+        /// <summary>
+        /// Vérifie la progression des missions actives
+        /// </summary>
+        private void CheckMissionsProgress(int currentSeconds)
         {
             if(_activeQuests == null) return;
+
             var questsToComplete = new List<QuestClass>();
-            foreach (var quest in _activeQuests.Where(q => q.State == QuestStateEnum.Active).ToList())
+            var activeQuests = _activeQuests.Where(q => q.State == QuestStateEnum.Active).ToList();
+
+            foreach (var quest in activeQuests)
             { 
-                int snapTime = currentSeconds - quest.StartSeconds;
-                //Debug.Log($"🎯 {quest.Name} | State: {quest.State} | current: {currentSeconds} / end: {quest.EndSeconds}");
-                foreach (var questEvent in quest.ActiveEvents)
-                {
-                    if (quest.TriggeredEventsDescriptionKeys.Contains(questEvent.DescriptionKey)) continue;
-                    
-                    if (snapTime >= questEvent.MinTimeTrigger && snapTime <= questEvent.MaxTimeTrigger)
-                    {
-                        if (Random.Range(0f, 100f) <= questEvent.PercentTrigger)
-                        {
-                            TriggerEvent(questEvent, quest);
-                            quest.TriggeredEventsDescriptionKeys.Add(questEvent.DescriptionKey);
-                        }
-                    }
-                }
-                
+                _snapTime = currentSeconds - quest.StartSeconds;
+                CheckQuestEvents(quest, currentSeconds);
+
                 if (quest.State == QuestStateEnum.Active && currentSeconds >= quest.EndSeconds)
                 {
                     questsToComplete.Add(quest);
                 }
             }
+
             foreach (var quest in questsToComplete)
             {
                 CompleteQuest(quest, quest.AssignedAdventurersID);
-                Debug.Log($"✅ Quête terminée : {quest.Name}");
             }
         }
 
-        void TriggerEvent(QuestEvent questEvent, QuestClass quest)
+        /// <summary>
+        /// Vérifie et déclenche les événements de quête lorsque les conditions sont remplies
+        /// </summary>
+        private void CheckQuestEvents(QuestClass quest, int currentSeconds)
         {
-            List<Guid> assignedAdventurersId = quest.AssignedAdventurersID;
-            
-            string description = LocalizationSystem.Instance.GetLocalizedText(questEvent.DescriptionKey);
-            Debug.LogWarning($"🎯[{quest.Name}] Un Event survint : {description}");
-            OnEventReceived?.Invoke(questEvent);
-            OnEventFromQuest?.Invoke(quest);
-            
-            var targets = questEvent.GetTargets(assignedAdventurersId);
-            ApplyEffect(questEvent.Effects, targets);
-        }
-
-        void ApplyEffect(List<EventEffect> effects, List<AdventurerClass> assignedAdventurers)
-        {
-            foreach (var effect in effects)
+            foreach (var questEvent in quest.ActiveEvents)
             {
-                foreach (var target in assignedAdventurers)
+                if (quest.TriggeredEventsDescriptionKeys.Contains(questEvent.DescriptionKey)) 
+                    continue;
+
+                if (_snapTime >= questEvent.MinTimeTrigger && _snapTime <= questEvent.MaxTimeTrigger)
                 {
-                    switch (effect.Type)
+                    if (Random.Range(0f, 100f) <= questEvent.PercentTrigger)
                     {
-                        case EffectType.Damage:
-                            target.TakeDamage(effect.Value);
-                            break;
-                        case EffectType.Heal:
-                            target.Heal(effect.Value);
-                            break;
-                        case EffectType.Buff:
-                            target.ApplyBuff(effect.Value);
-                            break;
+                        TriggerEvent(questEvent, quest);
+                        quest.TriggeredEventsDescriptionKeys.Add(questEvent.DescriptionKey);
                     }
-                        
                 }
             }
         }
 
-        public void CompleteQuest(QuestClass quest, List<Guid> team)
+        /// <summary>
+        /// Déclenche un événement de quête
+        /// </summary>
+        private void TriggerEvent(QuestEvent questEvent, QuestClass quest)
         {
-            Debug.Log("🥊 Complétion de quete");
-            if (quest.State != QuestStateEnum.Active) return;
-            foreach (var adventurerId in team)
+            string description = LocalizationSystem.Instance.GetLocalizedText(questEvent.DescriptionKey);
+
+            OnEventReceived?.Invoke(questEvent);
+            OnEventFromQuest?.Invoke(quest);
+
+            var targets = questEvent.GetTargets(quest.AssignedAdventurersID);
+            ApplyEffect(questEvent.Effects, targets);
+            questEvent.Time = _snapTime;
+            Dictionary<Guid, List<QuestEvent>> events = GetFact<Dictionary<Guid, List<QuestEvent>>>("events_quests_history");
+            if(!events.ContainsKey(quest.ID))
             {
-                AdventurerClass adventurer = QuestClass.GetOneAdventurerFromId(adventurerId);
-                adventurer.IsAvailable = true;
+                events.Add(quest.ID, new List<QuestEvent>());
             }
-            quest.State = QuestStateEnum.Completed;
-            _activeQuests.RemoveAll(q => q.Name == quest.Name);
-            _completedQuests.Add(quest);
-            
-            Dictionary<string, QuestStateEnum> quests = GetFact<Dictionary<string, QuestStateEnum>>("quests");
-            if (quests.ContainsKey(quest.Name))
-            {
-                quests[quest.Name] = QuestStateEnum.Completed;
-            }
-            NotifyCompletedQuests();
+            events[quest.ID].Add(questEvent);
             SaveFacts();
         }
-        
-        public void NotifyCompletedQuests()
+
+        /// <summary>
+        /// Applique les effets aux aventuriers ciblés
+        /// </summary>
+        private void ApplyEffect(List<EventEffect> effects, List<AdventurerClass> targets)
         {
-            foreach (var quest in _completedQuests)
+            foreach (var effect in effects)
             {
-                Debug.Log($"⛳️ La quête est finie : {quest.Name}");
-                OnQuestCompleted?.Invoke(quest);
+                foreach (var target in targets)
+                {
+                    ApplyEffectToTarget(effect, target);
+                }
             }
         }
 
-        public bool CanSelectedAdventurers()
+        /// <summary>
+        /// Applique un effet spécifique à un aventurier cible
+        /// </summary>
+        private void ApplyEffectToTarget(EventEffect effect, AdventurerClass target)
         {
-            return _currentQuest != null && _currentQuest.State == QuestStateEnum.Disponible;
+            switch (effect.Type)
+            {
+                case EffectType.Damage:
+                    target.TakeDamage(effect.Value);
+                    break;
+                case EffectType.Heal:
+                    target.Heal(effect.Value);
+                    break;
+                case EffectType.Buff:
+                    target.ApplyBuff(effect.Value);
+                    break;
+            }
         }
-        
-        public bool IsQuestCompleted(string questName)
-        {
-            return ActiveQuests != null 
-                   && ActiveQuests.Any(q => q.Name == questName && q.State == QuestStateEnum.Completed);
-        }
-        
-        List<QuestEvent> inActiveEvents;
-        static QuestManager _instance;
-        List<QuestClass> _activeQuests;
-        List<QuestClass> _completedQuests;
+
+        #endregion
     }
 }

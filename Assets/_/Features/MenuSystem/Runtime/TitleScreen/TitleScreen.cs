@@ -44,10 +44,9 @@ namespace MenuSystem.Runtime.TitleScreen
         public void Continue()
         {
             GameManager.Instance.Profile = "continue";
-            Info($"On charge le faux profile continue : {GameManager.Instance.Profile}");
+            // Chargement du profile continue
             LoadFacts();
             string profileName = GetFact<string>("profile");
-            Info($"On charge le vrai profile : {profileName}");
             GameManager.Instance.Profile = profileName;
             LoadFacts();
             SceneLoader.Instance.LoadScene("Game");

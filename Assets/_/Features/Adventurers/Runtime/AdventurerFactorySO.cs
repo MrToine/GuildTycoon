@@ -72,7 +72,7 @@ namespace Adventurer.Runtime
                     intelligence = Random.Range(2, 6);
                     break;
                 default:
-                    Debug.LogError($"Classe non gérée : {chosenClassEnum}");
+                    // Classe non gérée
                     break;
             }
 

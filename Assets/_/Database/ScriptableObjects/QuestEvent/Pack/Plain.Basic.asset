@@ -16,5 +16,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1c5c5e966eff44de2a4e5bfb86fd5b83, type: 2}
   - {fileID: 11400000, guid: ac20cb26cb1f5466c8bf844d73233583, type: 2}
   - {fileID: 11400000, guid: d24f1e171125942198f60c5e668462bc, type: 2}
+  - {fileID: 11400000, guid: c882d9d8340a34a28ac9b70ece0501de, type: 2}
+  - {fileID: 11400000, guid: 91d497f2b7aa94d8fa06b7f7b7ba8fc9, type: 2}
+  - {fileID: 11400000, guid: fb2cadf76c79b4d98a98be014a715bc4, type: 2}
+  - {fileID: 11400000, guid: 14f53993e23b4457fb1fbd79008f4df5, type: 2}
   - {fileID: 11400000, guid: 5cf7ff8e73a3c477484077f063082844, type: 2}
-  maxEventsToPick: 2
+  maxEventsToPick: 5

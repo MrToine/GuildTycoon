@@ -14,149 +14,193 @@ namespace GameUI.Runtime
 {
     public class InfoQuestPanel : BaseMonobehaviour
     {
-
         #region Publics
-
+        [Header("UI Text Elements")]
         public TextMeshProUGUI m_title;
         public TextMeshProUGUI m_description;
         public TextMeshProUGUI m_objective;
         public TextMeshProUGUI m_reward;
-
         #endregion
 
+        #region Privates and Protected
+        [Header("UI Control Elements")]
+        [SerializeField] private GameObject _buttonActivation;
+        [SerializeField] private GameObject _buttonRecap;
+        [SerializeField] private GameObject _adventurersOnThisQuestPanel;
+        [SerializeField] private GameObject _adventurersSelection;
+
+        private List<AdventurerClass> _adventurersSelected = new List<AdventurerClass>();
+        private Button _activationButton;
+        private TMP_Text _activationButtonText;
+        #endregion
 
         #region Unity API
+        private void Start()
+        {
+            InitializeUI();
+            RegisterEventHandlers();
+            LocalizeTexts();
+        }
 
-        void Start()
+        private void OnDestroy()
+        {
+            UnregisterEventHandlers();
+        }
+
+        private void Update()
+        {
+            UpdateActivationButtonState();
+        }
+        #endregion
+
+        #region Initialization
+        private void InitializeUI()
+        {
+            _activationButton = _buttonActivation.GetComponent<Button>();
+            _activationButtonText = _buttonActivation.GetComponentInChildren<TMP_Text>();
+        }
+
+        private void RegisterEventHandlers()
         {
             AdventurerSignals.OnAdventurerSelected += HandleAddAdventurersFromQuest;
             AdventurerSignals.OnAdventurerUnselected += HandleRemoveAdventurersFromQuest;
-            
+        }
+
+        private void UnregisterEventHandlers()
+        {
+            AdventurerSignals.OnAdventurerSelected -= HandleAddAdventurersFromQuest;
+            AdventurerSignals.OnAdventurerUnselected -= HandleRemoveAdventurersFromQuest;
+        }
+
+        private void LocalizeTexts()
+        {
             foreach (var txt in GetComponentsInChildren<TMP_Text>())
             {
                 txt.text = LocalizationSystem.Instance.GetLocalizedText(txt.text);
             }
         }
-
-        void OnDestroy()
-        {
-            AdventurerSignals.OnAdventurerSelected -= HandleAddAdventurersFromQuest;
-            AdventurerSignals.OnAdventurerUnselected -= HandleRemoveAdventurersFromQuest;
-            
-        }
-
-        void Update()
-        {
-            if (_adventurersSelected.Count >= 1)
-            {
-                _buttonActivation.GetComponent<Button>().interactable = true;
-                _buttonActivation.GetComponentInChildren<TMP_Text>().color = Color.yellow;
-            }
-            else
-            {
-                _buttonActivation.GetComponent<Button>().interactable = false;
-                _buttonActivation.GetComponentInChildren<TMP_Text>().color = Color.grey;
-            }
-        }
-
         #endregion
 
-
-        #region Main Methods
-
-        public void ShowInfo(QuestClass quest)
+        #region UI Updates
+        private void UpdateActivationButtonState()
         {
-            if (FactExists<List<QuestClass>>("active_quests", out _))
-            {
-                foreach (QuestClass activeQuest in GetFact<List<QuestClass>>("active_quests"))
-                {
-                    if (quest.Name == activeQuest.Name)
-                    {
-                        quest = activeQuest;
-                    }
-                }
-            }
-            QuestManager.Instance.CurrentQuest = quest;
-            m_title.text = LocalizationSystem.Instance.GetLocalizedText(quest.Name);
-            m_description.text = LocalizationSystem.Instance.GetLocalizedText(quest.Description);
-            m_objective.text = LocalizationSystem.Instance.GetLocalizedText(quest.Objective);
-            m_reward.text = RewardsListJoined(quest.Rewards);
-            
-            Info($"         ℹ️[InfoQuestPanel.cs] La quête {quest.Name} est dans l'état : {quest.State}.");
+            bool hasAdventurers = _adventurersSelected.Count >= 1;
+            _activationButton.interactable = hasAdventurers;
+            _activationButtonText.color = hasAdventurers ? Color.yellow : Color.grey;
+        }
 
-            switch (quest.State)
+        private void ConfigureUIForQuestState(QuestStateEnum state)
+        {
+            switch (state)
             {
                 case QuestStateEnum.Disponible:
-                    _buttonActivation.gameObject.SetActive(true);
+                    _buttonActivation.SetActive(true);
                     _adventurersOnThisQuestPanel.SetActive(false);
+                    _buttonRecap.SetActive(false);
                     break;
                 case QuestStateEnum.Completed:
-                    _buttonActivation.gameObject.SetActive(false);
+                    _buttonActivation.SetActive(false);
                     _adventurersOnThisQuestPanel.SetActive(false);
                     _adventurersSelection.SetActive(false);
+                    _buttonRecap.SetActive(true);
+                    break;
+                case QuestStateEnum.Active:
+                    Info("La quête est active.");
+                    _buttonActivation.SetActive(false);
+                    _adventurersOnThisQuestPanel.SetActive(true);
+                    _adventurersSelection.SetActive(false);
+                    _buttonRecap.SetActive(false);
                     break;
                 default:
-                    _buttonActivation.gameObject.SetActive(false);
+                    _buttonActivation.SetActive(false);
                     _adventurersOnThisQuestPanel.SetActive(true);
+                    _buttonRecap.SetActive(false);
                     break;
             }
+        }
+        #endregion
+
+        #region Main Methods
+        public void ShowInfo(QuestClass quest)
+        {
+            quest = FindMatchingActiveQuest(quest);
+            QuestManager.Instance.CurrentQuest = quest;
+
+            UpdateQuestInfoDisplay(quest);
+            ConfigureUIForQuestState(quest.State);
         }
 
         public void LaunchQuest()
         {
-            if (_adventurersSelected.Count > 0)
-            {
-                GameTime gameTime = GetFact<GameTime>("game_time");
-                QuestManager.Instance.StartQuest(QuestManager.Instance.CurrentQuest, _adventurersSelected, gameTime);
-                _adventurersSelected.Clear();
-                AdventurerSignals.RaiseRefreshAdventurers();
+            if (_adventurersSelected.Count <= 0) return;
 
-                List<QuestClass> activeQuests = GetFact<List<QuestClass>>("active_quests");
-                activeQuests.Add(QuestManager.Instance.CurrentQuest);
-                
-                QuestSignals.RaiseRefreshQuests();
-                
-                SaveFacts();
-                GameObject.SetActive(false);
-            }
+            StartQuestWithSelectedAdventurers();
+            CleanupAfterQuestLaunch();
         }
-
         #endregion
 
+        #region Quest Operations
+        private QuestClass FindMatchingActiveQuest(QuestClass quest)
+        {
+            if (!FactExists<List<QuestClass>>("active_quests", out _)) return quest;
+
+            var activeQuests = GetFact<List<QuestClass>>("active_quests");
+            var matchingQuest = activeQuests.FirstOrDefault(q => q.ID == quest.ID);
+            return matchingQuest ?? quest;
+        }
+
+        private void UpdateQuestInfoDisplay(QuestClass quest)
+        {
+            m_title.text = LocalizationSystem.Instance.GetLocalizedText(quest?.Name);
+            string descKey = quest?.Description;
+            if (string.IsNullOrEmpty(descKey))
+            {
+                Debug.LogWarning($"🧨 Clé de localisation vide ou nulle pour la quête ! ({quest.Description})");
+            }
+            m_description.text = LocalizationSystem.Instance.GetLocalizedText(descKey);
+            m_objective.text = LocalizationSystem.Instance.GetLocalizedText(quest?.Objective);
+            m_reward.text = FormatRewardsList(quest.Rewards);
+        }
+
+        private void StartQuestWithSelectedAdventurers()
+        {
+            var gameTime = GetFact<GameTime>("game_time");
+            QuestManager.Instance.StartQuest(QuestManager.Instance.CurrentQuest, _adventurersSelected, gameTime);
+
+            // Ajouter la quête à la liste des quêtes actives
+            var activeQuests = GetFact<List<QuestClass>>("active_quests");
+            activeQuests.Add(QuestManager.Instance.CurrentQuest);
+        }
+
+        private void CleanupAfterQuestLaunch()
+        {
+            _adventurersSelected.Clear();
+            AdventurerSignals.RaiseRefreshAdventurers();
+            QuestSignals.RaiseRefreshQuests();
+            gameObject.SetActive(false);
+        }
+        #endregion
 
         #region Utils
-
-        /* Fonctions privées utiles */
-        string RewardsListJoined(List<ItemReward> rewards)
+        private string FormatRewardsList(List<ItemReward> rewards)
         {
-            return string.Join(", ", rewards.Select(r => r.m_itemDefinition.DisplayNameKey != null
-                ? LocalizationSystem.Instance.GetLocalizedText(r.m_itemDefinition.DisplayNameKey)
-                : "???"));
+            return string.Join(", ", rewards.Select(r => {
+                if (r.m_itemDefinition.DisplayNameKey == null) return "???";
+                return LocalizationSystem.Instance.GetLocalizedText(r.m_itemDefinition.DisplayNameKey);
+            }));
         }
 
-        void HandleAddAdventurersFromQuest(AdventurerClass adventurer)
+        private void HandleAddAdventurersFromQuest(AdventurerClass adventurer)
         {
             _adventurersSelected.Add(adventurer);
-            Info($"Nouveau aventurier selectionné. {_adventurersSelected.Count} au total.");
+            Debug.Log($"Aventurier sélectionné: {adventurer.Name}. Total: {_adventurersSelected.Count}");
         }
 
-        void HandleRemoveAdventurersFromQuest(AdventurerClass adventurer)
+        private void HandleRemoveAdventurersFromQuest(AdventurerClass adventurer)
         {
             _adventurersSelected.Remove(adventurer);
-            Info($"L'aventurier à été retiré. {_adventurersSelected.Count} au total.");
+            Debug.Log($"Aventurier retiré: {adventurer.Name}. Total: {_adventurersSelected.Count}");
         }
-
-        #endregion
-
-
-        #region Privates and Protected
-
-        // Variables privées
-        [SerializeField] GameObject _buttonActivation;
-        [SerializeField] GameObject _adventurersOnThisQuestPanel;
-        [SerializeField] GameObject _adventurersSelection;
-        List<AdventurerClass> _adventurersSelected = new List<AdventurerClass>();
-
         #endregion
     }
 }

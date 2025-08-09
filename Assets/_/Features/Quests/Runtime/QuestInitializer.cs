@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Core.Runtime;
+using Quest.Runtime;
+using UnityEngine;
 
 namespace Quests.Runtime._.Features.Quests
 {
@@ -8,6 +10,7 @@ namespace Quests.Runtime._.Features.Quests
         void Awake()
         {
             var _ = QuestManager.Instance;
+            QuestManager.Instance.QuestDatabase = _questFactoryDatabase;
         }
 
         void Start()
@@ -29,6 +32,8 @@ namespace Quests.Runtime._.Features.Quests
         {
             QuestManager.Instance.NotifyCompletedQuests();
         }
+        
+        [SerializeField] QuestFactoryDatabase _questFactoryDatabase;
     }
 }
 

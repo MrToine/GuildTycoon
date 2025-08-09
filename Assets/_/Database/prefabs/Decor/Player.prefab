@@ -20469,7 +20469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_isVerbose: 0
   _zoneXZMin: {x: -6, y: 7.4}
-  _zoneXZMax: {x: 20, y: 18.72}
+  _zoneXZMax: {x: 13.5, y: 17}
   _moveDuration: 3
   _pauseDuration: 5
 --- !u!1 &6393548850111993716

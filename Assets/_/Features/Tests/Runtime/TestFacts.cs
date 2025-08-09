@@ -13,7 +13,6 @@ namespace TestFacts.Runtime
         void Start()
         {
             GameManager.Instance.Profile = "Guilde_de_Toine";
-            Info($"Test de Facts sur le profile : {GameManager.Instance.Profile}");
         }
 
         [ContextMenu("Créer un fait")]
@@ -21,7 +20,6 @@ namespace TestFacts.Runtime
         {
             SetFact<string>("fact", "Mon premier fait");
             _fact = GetFact<string>("fact");
-            Info($"Le Fact {_fact} à été créer avec succès");
         }
         
         [ContextMenu("Créer un fait persistant")]
@@ -29,14 +27,12 @@ namespace TestFacts.Runtime
         {
             SetFact<string>("fact", "Mon premier fait persistant", FactPersistence.Persistent);
             _fact = GetFact<string>("fact");
-            Info($"Le Fact {_fact} à été créer avec succès et est persistant");
         }
 
         [ContextMenu("Sauver les donénes")]
         public void Sauver()
         {
             SaveFacts();
-            Info("Faits sauvegardés");
         }
 
         [ContextMenu("Charger les données")]
@@ -44,14 +40,12 @@ namespace TestFacts.Runtime
         {
             LoadFacts();
             
-            Info("Liste des faits chargés :");
             GetAllFactsPlease();
         }
         
         [ContextMenu("Supprimer un fait")]
         public void RemoveFact()
         {
-            Info("Le fait à été supprimé");
             RemoveFact<string>("fact");
         }
 

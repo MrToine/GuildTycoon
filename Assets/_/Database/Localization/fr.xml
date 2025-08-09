@@ -21,6 +21,7 @@
     <quests_list>Quêtes</quests_list>
     <launch_quest_button>Lancer la quête !</launch_quest_button>
     <objective_label>Objectif(s)</objective_label>
+    <quest.recap>Récap quête</quest.recap>
     <!-- Panneau du tableau de quêtes -->
     <quests_board>Tableau des quêtes</quests_board>
     <!-- Panneau de l'inventaire -->
@@ -55,7 +56,13 @@
     <event.plain.narrative.2>En marchant, un héros trébuche... sur absolument rien. Dignité -1.</event.plain.narrative.2>
     <event.plain.narrative.3>Un gobelin tente de vendre au groupe des « ongles de pied de dragon authentiques ». Un héros en achète un.</event.plain.narrative.3>
     <event.plain.narrative.4>Un débat houleux éclate : la soupe, c’est un plat ou une boisson ? Le groupe se divise, 2 contre 2.</event.plain.narrative.4>
-
+    <event.plain.narrative.5>Un coffre est posé là, devant le groupe, à l'écart des teux indiscrets. Ils décident à l'unamité (ou presque...) de l'ouvrir. Bingo! Ils ont trouvés 100 or !!</event.plain.narrative.5>
+    <event.plain.narrative.6>La curiosité est un vilain défaut. Vos aventuriers l'ont appris à leur dépend... Quelque choses brillait au loin, et ils ont eu la mauvaise idée de savoir quoi. Ils ont pu fuir de justesse ce groupe de gobelin au dents aiguisées.</event.plain.narrative.6>
+    <event.plain.narrative.7>Rien de particulier. Ah si ! Un des aventuriers à la gastro.. foudroyante !</event.plain.narrative.7>
+    
+    <event.plain.fight.1>Un groupe de bandit demandent un droit de passage au abord d'un pont. Vous êtes contraint de pay... de les abattre. Après un combat acharné, vos aventuriers l'emporte !</event.plain.fight.1>
+    
+    
     <!-- OBJETS -->
     <item_gold>Or</item_gold>
     <item_gold_desc>Or.</item_gold_desc>

@@ -14,20 +14,24 @@ namespace Quest.Runtime
 
         public QuestFactorySO GetFactoryForLevel(int guildLevel)
         {
-            Debug.Log($"Get factory for level {guildLevel}");
             return m_factories
                 .Where(factory => factory.questTemplates.Any(template => template.data.MinLevel <= guildLevel))
                 .OrderBy(f => Random.value)
                 .FirstOrDefault();
         }
 
-        public QuestTemplate GetTemplatesByTitle(string title)
+        public QuestTemplate GetTemplatesByName(string name)
         {
+            Debug.Log($"On Cherche la quête avec le nom : {name}");
             foreach (var factory in m_factories)
             {
+                Debug.Log("⏱️ On parcours la liste des templates de la factory");
                 foreach (var template in factory.questTemplates)
                 {
-                    if (template.data.Name == title)
+                    Debug.Log($"🤖On vérifie que ça matche entre");
+                    Debug.Log($"💾 La save: {name}");
+                    Debug.Log($"💻 La factory: {template.data.Name}");
+                    if (template.data.Name == name)
                     {
                         return template;
                     }

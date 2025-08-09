@@ -43,7 +43,6 @@ namespace MenuSystem.Runtime.LoadGame
             {
                 GameObject slotGO = Instantiate(_slotPrefab, _slotPanel.transform);
                 slotGO.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = slot;
-                Info(slot);
             }
         }
 

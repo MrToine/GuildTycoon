@@ -18,15 +18,9 @@ namespace TestFacts.Runtime
 
         void Awake()
         {
-            Info("On vérifie que GameManager existe");
             if (GameManager.Instance == null)
             {
-                Warning("On charge le GameManager en repassant par le TitleScreen");
                 SceneManager.LoadScene("TitleScreen");
-            }
-            else
-            {
-                Warning("Le GameManager existe, alors tout est ok");
             }
         }
 

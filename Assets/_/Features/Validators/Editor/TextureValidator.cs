@@ -9,7 +9,7 @@ namespace Validators.Editor
         {
             if (assetPath.Contains("é")) // <- si une image contient un <é>
             {
-                Debug.LogError($"Texture name contains spaces : {assetPath}");
+                // Texture name contains spaces
                 System.IO.File.Move("../../", assetPath);
                 Debug.Log(assetPath);
             }

@@ -57,9 +57,8 @@ namespace GameUI.Runtime
 
         public void AcceptQuest()
         {
-            Info($"Le joueur à accepté la quête {_quest.Name}");
-            Dictionary<string, QuestStateEnum> quests = GetFact<Dictionary<string, QuestStateEnum>>("quests");
-            quests.Add(_quest.Name, QuestStateEnum.Disponible);
+            List<QuestClass> quests = GetFact<List<QuestClass>>("quests");
+            quests.Add(_quest);
             SaveFacts();
             QuestSignals.RaiseRefreshQuests();
             Destroy(gameObject); 

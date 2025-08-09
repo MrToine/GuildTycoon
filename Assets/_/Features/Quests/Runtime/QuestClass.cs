@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Adventurer.Runtime;
 using Core.Runtime;
 using Item.Runtime;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Quests.Runtime
@@ -22,49 +23,55 @@ namespace Quests.Runtime
             get { return _name; }
             set { _name = value; }
         }
-
+        
+        [JsonIgnore]
         public string Description
         {
             get { return _description; }
             set { _description = value; }
         }
         
+        [JsonIgnore]
         public string Objective
         {
             get { return _objective; }
             set { _objective = value; }
         }
-
+        
+        [JsonIgnore]
         public int Duration
         {
             get { return _duration; }
             set { _duration = value; }
         }
-
+        
+        [JsonIgnore]
         public QuestDifficultyEnum Difficulty
         {
             get { return _difficulty; }
             set { _difficulty = value; }
         }
-
+        
+        [JsonIgnore]
         public List<ItemReward> Rewards
         {
             get { return _rewards; }
             set { _rewards = new List<ItemReward>(); }
         }
-
+        
         public QuestStateEnum State
         {
             get { return _state; }
             set { _state = value; }
         }
         
+        [JsonIgnore]
         public int MinLevel
         {
             get { return _minLevel; }
             set { _minLevel = value; }
         }
-
+        
         public List<Guid> AssignedAdventurersID
         {
             get
@@ -100,7 +107,8 @@ namespace Quests.Runtime
                 _endSeconds = value;
             }
         }
-
+        
+        [JsonIgnore]
         public QuestEventPackSO EventPack
         {
             get
@@ -113,8 +121,8 @@ namespace Quests.Runtime
             }
         }
 
-        public List<QuestEvent> ActiveEvents => _activeEvents;
-        public List<string> TriggeredEventsDescriptionKeys = new List<string>();
+        [JsonIgnore] public List<QuestEvent> ActiveEvents => _activeEvents;
+        [JsonIgnore] public List<string> TriggeredEventsDescriptionKeys = new List<string>();
         
         #endregion
         
@@ -170,7 +178,7 @@ namespace Quests.Runtime
                 var pickedSO = pool[index];
                 pool.RemoveAt(index);
 
-                ActiveEvents.Add(pickedSO.ToRuntime()); 
+                ActiveEvents.Add(pickedSO.ToQuestEventClass(QuestManager.Instance.currentTimeInQuest)); 
             }
         }
         

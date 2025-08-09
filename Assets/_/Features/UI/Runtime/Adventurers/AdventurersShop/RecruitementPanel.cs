@@ -98,7 +98,6 @@ namespace GameUI.Runtime
             Player.Runtime.PlayerClass playerClass = GetFact<Player.Runtime.PlayerClass>(GameManager.Instance.Profile);
             if (playerClass.AdventurersCount == playerClass.AdventurersMax)
             {
-                Warning("Max des héros atteins");
                 return;
             }
             if (playerClass.Money >= price)

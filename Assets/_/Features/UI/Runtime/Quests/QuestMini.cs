@@ -52,7 +52,6 @@ namespace GameUI.Runtime
         void HandleQuestCompleted(QuestClass quest)
         {
             if (!MatchesQuest(quest.Name)) return;
-            Info($"Etat actuel de la quête {quest.Name} : {quest.State}");
             switch (quest.State)
             {
                 case QuestStateEnum.Disponible:

@@ -39,7 +39,6 @@ namespace GameUI.Runtime
         #region Utils
         void OnPortraitCapturedHandler(AdventurerClass adventurer, Sprite portrait)
         {
-            Info("Portrait ;D");
             foreach (Transform child in _heroesPanel.transform)
             {
                 AdventurerCardUI card = child.GetComponent<AdventurerCardUI>();

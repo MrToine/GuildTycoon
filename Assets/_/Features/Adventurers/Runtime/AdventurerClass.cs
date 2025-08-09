@@ -193,7 +193,7 @@ namespace Adventurer.Runtime
 
         public void TakeDamage(int effectValue)
         {
-            throw new NotImplementedException();
+            Debug.Log($"Taking damage: {effectValue}");
         }
 
         public void Heal(int effectValue)

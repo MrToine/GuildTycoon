@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Adventurer.Runtime;
@@ -46,9 +47,10 @@ namespace MenuSystem.Runtime
                 SetFact<PlayerClass>(saveName, newPlayerClass, FactPersistence.Persistent);
                 SetFact<GameTime>("game_time", new GameTime(), FactPersistence.Persistent);
                 SetFact<List<AdventurerClass>>("my_adventurers", new List<AdventurerClass>(), FactPersistence.Persistent);
-                SetFact<Dictionary<string, QuestStateEnum>>("quests", new Dictionary<string, QuestStateEnum>(), FactPersistence.Persistent);
+                SetFact<List<QuestClass>>("quests", new List<QuestClass>(), FactPersistence.Persistent);
                 SetFact<List<QuestClass>>("active_quests", new List<QuestClass>(), FactPersistence.Persistent);
                 SetFact<List<QuestClass>>("completed_quests", new List<QuestClass>(), FactPersistence.Persistent);
+                SetFact<Dictionary<Guid,  List<QuestEvent>>>("events_quests_history", new Dictionary<Guid, List<QuestEvent>>(), FactPersistence.Persistent);
                 GameManager.Instance.Profile = saveName;
                 SaveFacts();
                 

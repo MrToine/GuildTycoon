@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e985bf205d4d456cac619ec3ff4104e1, type: 3}
-  m_Name: narrative.3
+  m_Name: plains.narrative.1
   m_EditorClassIdentifier: 
+  m_assetGuid: 44b531fc-19c9-4335-b0ab-c881066744d7
   m_data:
-    _descriptionKey: event.plain.narrative.3
-    type: 1
-    environments: 01000000
-    enemyTags: 
-    minLevel: 1
-    minTimeTrigger: 30
-    maxTimeTrigger: 60
-    percentTrigger: 90
-    effects: []
-    targetingTypes: 0
+    _descriptionKey: event.plain.narrative.1
+    _type: 1
+    _environments: 00000000
+    _enemyTags: 
+    _minLevel: 1
+    _minTimeTrigger: 5
+    _maxTimeTrigger: 100
+    _percentTrigger: 90
+    _effects: []
+    _targetingTypes: 0

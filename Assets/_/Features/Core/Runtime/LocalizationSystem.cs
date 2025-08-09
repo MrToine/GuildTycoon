@@ -76,7 +76,6 @@ namespace Core.Runtime
             }
             else
             {
-                Error($"[ERROR] Language file not found : {lang} <{langFile}>");
             }
         }
         

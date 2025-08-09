@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Core.Runtime;
 using EventSystem.Runtime;
@@ -13,26 +14,15 @@ namespace GameUI.Runtime
 
         QuestClass _quest;
 
-        public void SetQuest(string questName, QuestStateEnum stateQuest)
+        public void SetQuest(QuestClass quest)
         {
-            Info($"          18. 🚨 [InteractionQuestCard.cs] La quête {questName} est dans l'état : {stateQuest}.");
-            QuestTemplate template = _questDatabase.GetTemplatesByTitle(questName);
-
-            if (template != null)
-            {
-                _quest = template.ToQuestClass(stateQuest);
-            }
-            else
-            {
-                Warning($"La quête {questName} n'a pas été trouvée dans la base !");
-            }
+            _quest = quest;
         }
 
         public void OnClick()
         {
             if (_quest != null)
             {
-                Info($"         ℹ️[InteractionQuestCard.cs] La quête {_quest.Name} est dans l'état : {_quest.State}.");
                 QuestSignals.RaiseInfoQuestPanel(_quest);
             }
         }

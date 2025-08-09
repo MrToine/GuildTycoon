@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Runtime;
@@ -43,39 +44,37 @@ namespace GameUI.Runtime
                 Destroy(child.gameObject);
             }
             
-            if (FactExists<Dictionary<string, QuestStateEnum>>("quests", out _))
+            if (FactExists<List<QuestClass>>("quests", out _))
             {
-                Dictionary<string, QuestStateEnum> quests = GetFact<Dictionary<string, QuestStateEnum>>("quests");
+                List<QuestClass>  questsFromSave = GetFact<List<QuestClass>>("quests");
 
+                List<QuestClass> quests = QuestManager.Instance.ResolveQuestsList(questsFromSave);
                 foreach (var quest in quests)
                 {
-                    Info($"          52. 🚨 [QuestPanel.cs] La quête {quest.Key} est dans l'état : {quest.Value}.");
-                    DisplayQuest(quest.Key, quest.Value); //=> Key : Le nom de la quête, Value : Le State
+                    DisplayQuest(quest); //=> Key : L'id de la quête, Value : Le State
                 }
             }
         }
         
-        void DisplayQuest(string questName, QuestStateEnum stateQuest)
+        void DisplayQuest(QuestClass quest)
         {
             GameObject questGO = Instantiate(_questMiniPrefab, _panel.transform);
             TMP_Text questNameLabel = questGO.GetComponentInChildren<TMP_Text>();
-            questNameLabel.text = LocalizationSystem.Instance.GetLocalizedText(questName);
+            questNameLabel.text = LocalizationSystem.Instance.GetLocalizedText(quest.Name);
 
             var questMini = questGO.GetComponent<QuestMini>();
             if (questMini != null)
             {
-                questMini.SetQuestName(questName);
-                bool isCompleted = QuestManager.Instance?.IsQuestCompleted(questName) == true;
+                questMini.SetQuestName(quest.Name);
+                bool isCompleted = QuestManager.Instance?.IsQuestCompleted(quest.Name) == true;
                 questMini.m_check?.SetActive(isCompleted);
             }
             
-            Info($"          71. 🚨 [QuestsPanel.cs.cs] La quête {questName} est dans l'état : {stateQuest}.");
-            questGO.GetComponent<InteractionQuestCard>().SetQuest(questName, stateQuest);
+            questGO.GetComponent<InteractionQuestCard>().SetQuest(quest);
         }
 
         void QuestCompleted(QuestClass quest)
         {
-            Info("Information d'event reçu dans QuestPanel.cs >>>> depuis QuestManager.cs (OnQuestCompleted)");
             CheckCompleted(quest);
         }
 

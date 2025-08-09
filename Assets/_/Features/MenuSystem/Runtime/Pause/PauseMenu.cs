@@ -80,7 +80,7 @@ namespace MenuSystem.Runtime
 
                 private void SlideIn()
                 {
-                        Info("On slide IN");
+                        // Slide IN
                         //_panel.position = new Vector2(200, _panel.position.y);
                         _panel.transform.DOMove(new Vector3(99, _panel.position.y, 0), 0.3f).SetEase(Ease.Linear).SetUpdate(true);
 
@@ -88,7 +88,6 @@ namespace MenuSystem.Runtime
                 
                 private void SlideOut()
                 {
-                        Info("On slide OUT");
                         //_panel.position = new Vector2(-200, _panel.position.y);
                         _panel.transform.DOMove(new Vector3(-100, _panel.position.y, 0), 0.3f).SetEase(Ease.Linear);
                 }

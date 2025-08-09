@@ -103,17 +103,17 @@ namespace Core.Runtime
         
         protected void Info(string message)
         {
-            // Debug supprimé
+            Debug.Log(message);
         }
 
         protected void Error(string message)
         {
-            // Debug supprimé
+            Debug.LogError(message);
         }
 
         protected void Warning(string message)
         {
-            // Debug supprimé
+            Debug.LogWarning(message);
         }
         
         #endregion
