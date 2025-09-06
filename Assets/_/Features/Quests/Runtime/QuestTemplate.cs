@@ -8,6 +8,7 @@ namespace Quests.Runtime
     [CreateAssetMenu(fileName = "Quest Template", menuName = "Guild Tycoon/Quests/Template", order = 0)]
     public class QuestTemplate : ScriptableObject
     {
+        public string m_assetGuid;
         public QuestClass data;
         public QuestClass ToQuestClass(QuestStateEnum stateQuest, Guid? id = null)
         {
@@ -34,5 +35,17 @@ namespace Quests.Runtime
             quest.InitializeEvents(data.EventPack);
             return quest;
         }
+        
+        #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            Guid tempGuid;
+            if (string.IsNullOrEmpty(m_assetGuid) || !Guid.TryParse(m_assetGuid, out tempGuid))
+            {
+                m_assetGuid = Guid.NewGuid().ToString();
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+        }
+        #endif
     }
 }

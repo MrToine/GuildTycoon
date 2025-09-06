@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e985bf205d4d456cac619ec3ff4104e1, type: 3}
   m_Name: quests.events.rats.infection.3
   m_EditorClassIdentifier: 
+  m_assetGuid: aba20819-2421-4fd6-bc15-62a4eed5cc44
   m_data:
     _descriptionKey: quests.events.rats.infection.3
-    type: 1
-    environments: 05000000
-    enemyTags: 
-    minLevel: 1
-    minTimeTrigger: 170
-    maxTimeTrigger: 175
-    percentTrigger: 100
-    effects: []
-    targetingTypes: 1
+    _type: 0
+    _environments: 
+    _enemyTags: 
+    _minLevel: 1
+    _minTimeTrigger: 117
+    _maxTimeTrigger: 119
+    _percentTrigger: 100
+    _effects: []
+    _targetingTypes: 0

@@ -23,6 +23,8 @@ namespace GameUI.Runtime
         {
             if (_quest != null)
             {
+                QuestManager.Instance.CurrentQuest = _quest;
+                Info($"⏱️MAJ de la current quest {QuestManager.Instance.CurrentQuest.Name}");
                 QuestSignals.RaiseInfoQuestPanel(_quest);
             }
         }

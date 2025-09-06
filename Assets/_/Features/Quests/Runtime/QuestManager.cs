@@ -13,7 +13,7 @@ namespace Quests.Runtime
     {
         #region Singleton
 
-        private static QuestManager _instance;
+        static QuestManager _instance;
         public static QuestManager Instance => _instance ??= new QuestManager();
 
         #endregion
@@ -28,21 +28,21 @@ namespace Quests.Runtime
 
         #region Properties
 
-        private QuestClass _currentQuest;
+         QuestClass _currentQuest;
         public QuestClass CurrentQuest
         {
             get => _currentQuest;
             set => _currentQuest = value;
         }
 
-        private List<QuestClass> _activeQuests;
+         List<QuestClass> _activeQuests;
         public List<QuestClass> ActiveQuests
         {
             get => _activeQuests;
             set => _activeQuests = value;
         }
 
-        private List<QuestClass> _completedQuests;
+         List<QuestClass> _completedQuests;
         public List<QuestClass> CompletedQuests
         {
             get => _completedQuests;
@@ -51,18 +51,19 @@ namespace Quests.Runtime
 
         public List<Guid> AssignedAdventurers => _currentQuest?.AssignedAdventurersID;
 
-        [SerializeField] private QuestFactoryDatabase _questDatabase;
+        [SerializeField]  QuestFactoryDatabase _questDatabase;
         public QuestFactoryDatabase QuestDatabase
         {
             get => _questDatabase;
             set => _questDatabase = value;
         }
 
-        private int _snapTime = 0;
         public int currentTimeInQuest => _snapTime;
+        int _snapTime = 0;
+        List<QuestEvent> _activeEvents;
 
         // Champ inutilisé - conservé pour référence future
-        private List<QuestEvent> inActiveEvents;
+         List<QuestEvent> inActiveEvents;
 
         #endregion
 
@@ -111,6 +112,18 @@ namespace Quests.Runtime
         }
 
         /// <summary>
+        /// Récupère l'historique des events lié à une quête
+        /// </summary>
+        public QuestSummary GetQuestHistory(Guid questId)
+        {
+            QuestClass quest = GetQuestById(questId);
+
+            List<QuestEventLog> events = GetFact<Dictionary<Guid, List<QuestEventLog>>>("events_quests_history")[questId];
+            
+            return new QuestSummary(quest, events);
+        }
+
+        /// <summary>
         /// Vérifie si des aventuriers peuvent être sélectionnés pour la quête courante
         /// </summary>
         public bool CanSelectedAdventurers()
@@ -144,12 +157,12 @@ namespace Quests.Runtime
 
         #endregion
 
-        #region Private Methods
+        #region  Methods
 
         /// <summary>
         /// Assigne des aventuriers à une quête
         /// </summary>
-        private void AssignAdventurersToQuest(QuestClass quest, List<AdventurerClass> team)
+       void AssignAdventurersToQuest(QuestClass quest, List<AdventurerClass> team)
         {
             foreach (var adventurer in team)
             {
@@ -163,7 +176,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Configure les temps de début et de fin d'une quête
         /// </summary>
-        private void SetQuestTimings(QuestClass quest, GameTime gameTime)
+       void SetQuestTimings(QuestClass quest, GameTime gameTime)
         {
             quest.State = QuestStateEnum.Active;
             quest.StartSeconds = gameTime.TotalSeconds;
@@ -173,7 +186,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Met à jour le statut d'une quête dans les listes actives et sauvegardées
         /// </summary>
-        private void UpdateQuestStatus(QuestClass quest)
+       void UpdateQuestStatus(QuestClass quest)
         {
             _activeQuests.Add(quest);
             List<QuestClass> saveQuests = GetFact<List<QuestClass>>("quests");
@@ -192,7 +205,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Libère les aventuriers assignés à une quête
         /// </summary>
-        private void ReleaseAdventurers(List<Guid> team)
+       void ReleaseAdventurers(List<Guid> team)
         {
             foreach (var adventurerId in team)
             {
@@ -205,7 +218,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Met à jour le statut de complétion d'une quête
         /// </summary>
-        private void UpdateQuestCompletionStatus(QuestClass quest)
+       void UpdateQuestCompletionStatus(QuestClass quest)
         {
             quest.State = QuestStateEnum.Completed;
             _activeQuests.RemoveAll(q => q.Name == quest.Name);
@@ -224,7 +237,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Sauvegarde les progrès des quêtes
         /// </summary>
-        private void SaveQuestProgress()
+       void SaveQuestProgress()
         {
             SaveFacts();
         }
@@ -232,7 +245,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Vérifie la progression des missions actives
         /// </summary>
-        private void CheckMissionsProgress(int currentSeconds)
+       void CheckMissionsProgress(int currentSeconds)
         {
             if(_activeQuests == null) return;
 
@@ -259,7 +272,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Vérifie et déclenche les événements de quête lorsque les conditions sont remplies
         /// </summary>
-        private void CheckQuestEvents(QuestClass quest, int currentSeconds)
+       void CheckQuestEvents(QuestClass quest, int currentSeconds)
         {
             foreach (var questEvent in quest.ActiveEvents)
             {
@@ -280,29 +293,32 @@ namespace Quests.Runtime
         /// <summary>
         /// Déclenche un événement de quête
         /// </summary>
-        private void TriggerEvent(QuestEvent questEvent, QuestClass quest)
+       void TriggerEvent(QuestEvent questEvent, QuestClass quest)
         {
-            string description = LocalizationSystem.Instance.GetLocalizedText(questEvent.DescriptionKey);
-
+            questEvent.Time = _snapTime;
             OnEventReceived?.Invoke(questEvent);
             OnEventFromQuest?.Invoke(quest);
 
             var targets = questEvent.GetTargets(quest.AssignedAdventurersID);
             ApplyEffect(questEvent.Effects, targets);
-            questEvent.Time = _snapTime;
-            Dictionary<Guid, List<QuestEvent>> events = GetFact<Dictionary<Guid, List<QuestEvent>>>("events_quests_history");
+            Dictionary<Guid, List<QuestEventLog>> events = GetFact<Dictionary<Guid, List<QuestEventLog>>>("events_quests_history");
+            
             if(!events.ContainsKey(quest.ID))
             {
-                events.Add(quest.ID, new List<QuestEvent>());
+                events.Add(quest.ID, new List<QuestEventLog>());
             }
-            events[quest.ID].Add(questEvent);
+
+            QuestEventLog questEventLog = new QuestEventLog(_snapTime,  questEvent.Id);
+            
+            events[quest.ID].Add(questEventLog);
+            _activeEvents.Add(questEvent);
             SaveFacts();
         }
 
         /// <summary>
         /// Applique les effets aux aventuriers ciblés
         /// </summary>
-        private void ApplyEffect(List<EventEffect> effects, List<AdventurerClass> targets)
+       void ApplyEffect(List<EventEffect> effects, List<AdventurerClass> targets)
         {
             foreach (var effect in effects)
             {
@@ -316,7 +332,7 @@ namespace Quests.Runtime
         /// <summary>
         /// Applique un effet spécifique à un aventurier cible
         /// </summary>
-        private void ApplyEffectToTarget(EventEffect effect, AdventurerClass target)
+      void ApplyEffectToTarget(EventEffect effect, AdventurerClass target)
         {
             switch (effect.Type)
             {
@@ -330,6 +346,48 @@ namespace Quests.Runtime
                     target.ApplyBuff(effect.Value);
                     break;
             }
+        }
+        
+        /// <summary>
+        /// Récupère une quête via son ID
+        /// </summary>
+        /// <param name="questId"></param>
+        /// <returns></returns>
+        QuestClass GetQuestById(Guid questId)
+        {
+            QuestClass quest = _activeQuests.FirstOrDefault(q => q.ID == questId);
+            
+            if(quest != null)
+                return quest;
+            
+            quest = _completedQuests.FirstOrDefault(q => q.ID == questId);
+            
+            if(quest != null)
+                return quest;
+
+            foreach (var factory in _questDatabase.GetAll())
+            {
+                foreach (var template in factory.questTemplates)
+                {
+                    if (Guid.TryParse(template.m_assetGuid, out Guid guid) && guid == questId)
+                    {
+                        return template.ToQuestClass(QuestStateEnum.Disponible, questId);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Récupère un event via son ID
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns>QuestEvent</returns>
+        public QuestEvent GetEventById(Guid eventId)
+        {
+            if (_activeEvents == null) return null;
+            return _activeEvents.FirstOrDefault(e => e.Id == eventId);
         }
 
         #endregion

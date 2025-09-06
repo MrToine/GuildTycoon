@@ -50,7 +50,7 @@ namespace MenuSystem.Runtime
                 SetFact<List<QuestClass>>("quests", new List<QuestClass>(), FactPersistence.Persistent);
                 SetFact<List<QuestClass>>("active_quests", new List<QuestClass>(), FactPersistence.Persistent);
                 SetFact<List<QuestClass>>("completed_quests", new List<QuestClass>(), FactPersistence.Persistent);
-                SetFact<Dictionary<Guid,  List<QuestEvent>>>("events_quests_history", new Dictionary<Guid, List<QuestEvent>>(), FactPersistence.Persistent);
+                SetFact<Dictionary<Guid,  List<QuestEventLog>>>("events_quests_history", new Dictionary<Guid, List<QuestEventLog>>(), FactPersistence.Persistent);
                 GameManager.Instance.Profile = saveName;
                 SaveFacts();
                 

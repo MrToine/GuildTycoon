@@ -4,10 +4,12 @@ using System.Linq;
 using Adventurer.Runtime;
 using Core.Runtime;
 using EventSystem.Runtime;
+using GameUI.Runtime.Events;
 using Item.Runtime;
 using Quests.Runtime;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GameUI.Runtime
@@ -25,7 +27,8 @@ namespace GameUI.Runtime
         #region Privates and Protected
         [Header("UI Control Elements")]
         [SerializeField] private GameObject _buttonActivation;
-        [SerializeField] private GameObject _buttonRecap;
+        [FormerlySerializedAs("_buttonRecap")]
+        [SerializeField] private GameObject _panelRecap;
         [SerializeField] private GameObject _adventurersOnThisQuestPanel;
         [SerializeField] private GameObject _adventurersSelection;
 
@@ -96,25 +99,26 @@ namespace GameUI.Runtime
                 case QuestStateEnum.Disponible:
                     _buttonActivation.SetActive(true);
                     _adventurersOnThisQuestPanel.SetActive(false);
-                    _buttonRecap.SetActive(false);
+                    _panelRecap.SetActive(false);
                     break;
                 case QuestStateEnum.Completed:
                     _buttonActivation.SetActive(false);
                     _adventurersOnThisQuestPanel.SetActive(false);
                     _adventurersSelection.SetActive(false);
-                    _buttonRecap.SetActive(true);
+                    _panelRecap.SetActive(true);
+                    _panelRecap.GetComponent<QuestLogsListUI>().ShowFor(QuestManager.Instance.CurrentQuest.ID);
                     break;
                 case QuestStateEnum.Active:
                     Info("La quête est active.");
                     _buttonActivation.SetActive(false);
                     _adventurersOnThisQuestPanel.SetActive(true);
                     _adventurersSelection.SetActive(false);
-                    _buttonRecap.SetActive(false);
+                    _panelRecap.SetActive(false);
                     break;
                 default:
                     _buttonActivation.SetActive(false);
                     _adventurersOnThisQuestPanel.SetActive(true);
-                    _buttonRecap.SetActive(false);
+                    _panelRecap.SetActive(false);
                     break;
             }
         }
@@ -204,4 +208,3 @@ namespace GameUI.Runtime
         #endregion
     }
 }
-

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521b71060d404540bd5b9baaf3a74cf4, type: 3}
   m_Name: rats.infection
   m_EditorClassIdentifier: 
+  m_assetGuid: 5042e2b4-f2ff-40e8-8fc7-2531166a4db8
   data:
+    TriggeredEventsDescriptionKeys: []
     _name: quests.1.title
     _description: quests.1.desc
     _objective: quests.1.objective

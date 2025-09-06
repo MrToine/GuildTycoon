@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521b71060d404540bd5b9baaf3a74cf4, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: 
+  m_assetGuid: dbe74578-3cd6-400b-8bb3-4947c7d5c010
   data:
+    TriggeredEventsDescriptionKeys: []
     _name: Test
     _description: Simple test for a quest system
     _objective: Nothing

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521b71060d404540bd5b9baaf3a74cf4, type: 3}
   m_Name: troll.lol
   m_EditorClassIdentifier: 
+  m_assetGuid: ba3ce432-9c25-46c0-99aa-cc6b53fbdc1f
   data:
+    TriggeredEventsDescriptionKeys: []
     _name: quests.2.title
     _description: quests.2.desc
     _objective: quests.2.objective

@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Adventurer.Runtime;
 using UnityEngine;
 using Core.Runtime;
 using EventSystem.Runtime;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 namespace GameUI.Runtime
 {
@@ -20,21 +22,48 @@ namespace GameUI.Runtime
 
         #region Unity API
 
-        private void OnEnable()
+        void OnEnable()
         {
-            GenerateAdventurer(20);
+            if (_content == null)
+            {
+                _content = GetComponent<RectTransform>();
+            }
+            StartCoroutine(OpenRoutine());
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
-            foreach (Transform child in transform)
+            // Intentionally left empty during debug to validate first-open rendering.
+            // (We avoid destroying children here to keep the list intact between toggles.)
+        }
+
+        IEnumerator OpenRoutine()
+        {
+            // Defer one frame to let Canvas/Scaler/Mask finish their activation cycle
+            yield return null;
+
+            // Generate only if empty (prevents duplicate spawns on reopen)
+            if (_content != null && _content.childCount == 0)
             {
-                AdventurerCardUI card = child.GetComponent<AdventurerCardUI>();
-                if (card != null)
+                Clear();
+                GenerateAdventurer(20);
+            }
+
+            // Wait until end of frame to ensure instantiated elements are present before forcing layout
+            yield return new WaitForEndOfFrame();
+
+            Canvas.ForceUpdateCanvases();
+            if (_content != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_content);
+                // Also rebuild the parent (Viewport) if present to ensure mask/scroll region updates
+                var parentRT = _content.parent as RectTransform;
+                if (parentRT != null)
                 {
-                    Destroy(child.gameObject);
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(parentRT);
                 }
             }
+            Canvas.ForceUpdateCanvases();
         }
 
         #endregion
@@ -45,12 +74,19 @@ namespace GameUI.Runtime
         [ContextMenu("Effacer le container")] 
         public void Clear()
         {
-            foreach (Transform child in transform)
+            if (_content == null)
+            {
+                _content = GetComponent<RectTransform>();
+            }
+
+            if (_content == null) return;
+
+            foreach (Transform child in _content)
             {
                 AdventurerCardUI card = child.GetComponent<AdventurerCardUI>();
                 if (card != null)
                 {
-                    DestroyImmediate(child.gameObject);
+                    Destroy(child.gameObject);
                 }
             }
         }
@@ -68,18 +104,32 @@ namespace GameUI.Runtime
 
         public void GenerateAdventurer(int nbAdventurers = 1)
         {
-            int numbers = Random.Range(5, nbAdventurers + 1);
-            for (int i = 0; i < numbers; i++)
+            if (_content == null)
+            {
+                _content = GetComponent<RectTransform>();
+            }
+
+            Info($"Génération de {nbAdventurers} aventuriers");
+
+            for (int i = 0; i < nbAdventurers; i++)
             {
                 AdventurerClass newRecruit = m_adventurersSO.CreateAdventurer();
-                
+                Info($"Aventurier n°{i}/{nbAdventurers}. Nom : {newRecruit.Name}");
                 DisplayHeroCard(newRecruit);
             }
+
+            // Ensure the first-time open displays items correctly
+            StartCoroutine(RefreshLayoutNextFrame());
         }
 
-        private void DisplayHeroCard(AdventurerClass newRecruit)
+        void DisplayHeroCard(AdventurerClass newRecruit)
         {
-            GameObject adventurerGO = Instantiate(_adventurerPrefab, transform);
+            if (_content == null)
+            {
+                _content = GetComponent<RectTransform>();
+            }
+
+            GameObject adventurerGO = Instantiate(_adventurerPrefab, _content != null ? _content : transform);
             adventurerGO.transform.SetAsLastSibling();
             AdventurerCardUI card = adventurerGO.GetComponent<AdventurerCardUI>();
             
@@ -93,7 +143,18 @@ namespace GameUI.Runtime
             card.m_buyButton.onClick.AddListener(() => BuyHero(adventurerGO, newRecruit, int.Parse(price)));
         }
 
-        private void BuyHero(GameObject go, AdventurerClass newRecruit, int price = 0)
+        IEnumerator RefreshLayoutNextFrame()
+        {
+            yield return new WaitForEndOfFrame();
+            Canvas.ForceUpdateCanvases();
+            if (_content != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_content);
+            }
+            Canvas.ForceUpdateCanvases();
+        }
+
+        void BuyHero(GameObject go, AdventurerClass newRecruit, int price = 0)
         {
             Player.Runtime.PlayerClass playerClass = GetFact<Player.Runtime.PlayerClass>(GameManager.Instance.Profile);
             if (playerClass.AdventurersCount == playerClass.AdventurersMax)
@@ -123,6 +184,7 @@ namespace GameUI.Runtime
 
         #region Privates and Protected
 
+        [SerializeField] RectTransform _content; // Assign this to ScrollView/Viewport/Content in the inspector
         private int _nextId = 0;
         [SerializeField] GameObject _adventurerPrefab;
         [SerializeField] GameObject _photoStudio;

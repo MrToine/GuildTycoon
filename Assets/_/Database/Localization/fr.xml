@@ -21,7 +21,7 @@
     <quests_list>Quêtes</quests_list>
     <launch_quest_button>Lancer la quête !</launch_quest_button>
     <objective_label>Objectif(s)</objective_label>
-    <quest.recap>Récap quête</quest.recap>
+    <recap.quest>Récap quête</recap.quest>
     <!-- Panneau du tableau de quêtes -->
     <quests_board>Tableau des quêtes</quests_board>
     <!-- Panneau de l'inventaire -->
